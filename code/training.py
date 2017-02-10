@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
-out_dir = './out/'
+out_dir = '../out/'
 
 # build session running on GPU 1
 configuration = tf.ConfigProto()
@@ -37,9 +37,9 @@ session = tf.Session(config = configuration)
 keras.backend.set_session(session)
 
 # load  x
-training_x = np.load("./data/training/x.npy")
-test_x = np.load("./data/test/x.npy")
-validation_x = np.load("./data/validation/x.npy")
+training_x = np.load("../data/training/x.npy")
+test_x = np.load("../data/test/x.npy")
+validation_x = np.load("../data/validation/x.npy")
 
 print(training_x.shape)
 print(test_x.shape)
@@ -54,9 +54,9 @@ validation_x = validation_x / 255
 # In[6]:
 
 # load y
-training_y = np.load("./data/training/y.npy")
-test_y = np.load("./data/test/y.npy")
-validation_y = np.load("./data/validation/y.npy")
+training_y = np.load("../data/training/y.npy")
+test_y = np.load("../data/test/y.npy")
+validation_y = np.load("../data/validation/y.npy")
 
 print(training_y.shape)
 print(test_y.shape)
@@ -100,17 +100,17 @@ model.compile(loss=loss,  metrics=metrics, optimizer=optimizer)
 # callback_early_stopping = keras.callbacks.EarlyStopping(patience=4)
 
 # save model after each epoch
-callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="./checkpoints/checkpoint.hdf5", save_weights_only=True, save_best_only=True)
+callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="../checkpoints/checkpoint.hdf5", save_weights_only=True, save_best_only=True)
 
 # collect logs about each batch
 callback_batch_stats = helper.batch_logger.BatchLogger(metrics, verbose=False)
 
-callback_csv = keras.callbacks.CSVLogger(filename="./logs/log.csv")
+callback_csv = keras.callbacks.CSVLogger(filename="../logs/log.csv")
 
 callbacks=[callback_batch_stats, callback_model_checkpoint, callback_csv]
 
 # TRAIN
-statistics = model.fit(nb_epoch=100, batch_size=60, class_weight=class_weights, validation_data=(validation_x, validation_y_vec), x=training_x, y=training_y_vec, callbacks = callbacks , verbose = 1)
+statistics = model.fit(nb_epoch=2, batch_size=60, class_weight=class_weights, validation_data=(validation_x, validation_y_vec), x=training_x, y=training_y_vec, callbacks = callbacks , verbose = 1)
 
 
 plt.figure()
