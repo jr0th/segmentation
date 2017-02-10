@@ -1,3 +1,7 @@
+# DIRECTORIES
 data/
 logs/
 checkpoints/
+
+# PYTHON CLUTTER
+__pycache__/
