@@ -4,7 +4,7 @@ import keras.layers
 import keras.models
 import keras.optimizers
 
-import helper.BatchLogger
+import helper.batch_logger
 import helper.model_builder
 import helper.visualize
 
