@@ -2,7 +2,7 @@ import keras.utils.np_utils
 import numpy
 
 import skimage.io
-import skimage.utilplt
+import skimage.util
 
 def window_gray(images):
     windows = []
@@ -77,6 +77,6 @@ def images_to_numpy(img_dir, ):
     numpy.save(img_dir + "/y.npy", y)
 
 # create training data
-images_to_numpy("../images/training")
-images_to_numpy("../images/test")
-images_to_numpy("../images/validation")
+images_to_numpy("./data/training")
+images_to_numpy("./data/test")
+images_to_numpy("./data/validation")
