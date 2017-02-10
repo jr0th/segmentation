@@ -103,7 +103,7 @@ model.compile(loss=loss,  metrics=metrics, optimizer=optimizer)
 callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="./checkpoints/checkpoint.hdf5", save_weights_only=True, save_best_only=True)
 
 # collect logs about each batch
-callback_batch_stats = helper.BatchLogger.BatchLogger(metrics, verbose=False)
+callback_batch_stats = helper.batch_logger.BatchLogger(metrics, verbose=False)
 
 callback_csv = keras.callbacks.CSVLogger(filename="./logs/log.csv")
 
