@@ -7,6 +7,7 @@ import keras.optimizers
 import helper.batch_logger
 import helper.model_builder
 import helper.visualize
+import helper.objectives
 
 import skimage.io
 import sklearn.metrics
@@ -51,8 +52,6 @@ test_x = test_x / 255
 validation_x = validation_x / 255
 
 
-# In[6]:
-
 # load y
 training_y = np.load("../data/training/y.npy")
 test_y = np.load("../data/test/y.npy")
@@ -71,11 +70,16 @@ print(training_y_vec.shape)
 print(test_y_vec.shape)
 print(validation_y_vec.shape)
 
+print(np.unique(training_y_vec))
+print(np.unique(test_y_vec))
+print(np.unique(validation_y_vec))
+
 dim1 = training_x.shape[1]
 dim2 = training_x.shape[2]
 
 # get class weights
-freq = scipy.stats.itemfreq(np.argmax(training_y[14,:,:,:], axis = 2))
+freq = scipy.stats.itemfreq(np.argmax(training_y[0,:,:,:], axis = 2))
+print(freq)
 freq_df = pd.DataFrame(freq[:,1]/np.sum(freq[:,1]), ['background', 'interior', 'boundary'], columns=['freq'])
 
 print(freq_df)
@@ -91,8 +95,8 @@ loss = "categorical_crossentropy"
 metrics = ["categorical_accuracy"]
 optimizer = keras.optimizers.RMSprop(lr = const_lr)
 
-model.compile(loss=loss,  metrics=metrics, optimizer=optimizer)
-
+# model.compile(loss=loss,  metrics=metrics, optimizer=optimizer)
+model.compile(loss=helper.objectives.w_categorical_crossentropy, metrics=metrics, optimizer=optimizer)
 
 # add callbacks
 
@@ -110,7 +114,7 @@ callback_csv = keras.callbacks.CSVLogger(filename="../logs/log.csv")
 callbacks=[callback_batch_stats, callback_model_checkpoint, callback_csv]
 
 # TRAIN
-statistics = model.fit(nb_epoch=2, batch_size=60, class_weight=class_weights, validation_data=(validation_x, validation_y_vec), x=training_x, y=training_y_vec, callbacks = callbacks , verbose = 1)
+statistics = model.fit(nb_epoch=5, batch_size=60, class_weight=class_weights, validation_data=(validation_x, validation_y_vec), x=training_x, y=training_y_vec, callbacks = callbacks , verbose = 1)
 
 
 plt.figure()
