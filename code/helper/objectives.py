@@ -1,27 +1,36 @@
-import keras.backend as K
+import keras.metrics
 import tensorflow as tf
 
 def w_categorical_crossentropy(y_true, y_pred):
+    flag_debug = True
 
-    print(y_true.get_shape())
-    print(y_pred.get_shape())
-    mask_int = tf.argmax(y_true, axis=2)
-    mask = tf.to_float(mask_int)
+    # get number of classes
+    nb_classes = y_pred.get_shape()[2].value
 
-    weight_bg =  1/0.7
-    weight_cell = 1/0.2
-    weight_b = 1/0.1
+    # calculate frequency over batch
+    freq = tf.reduce_mean(y_true, axis = [0, 1])
 
-    # scale up to 1  
-    c = 1/(weight_bg + weight_cell + weight_bg)
-    weight_bg *= c
-    weight_cell *= c
-    weight_b *= c
+    if flag_debug:    
+        freq = tf.Print(freq, [freq], message="Freq: ")
     
-    weight_tensor = tf.constant([[[weight_bg, weight_cell, weight_b]]], dtype=tf.float32)
- 
-    mask = tf.multiply(y_true, weight_tensor)
-    mask = tf.reduce_max(mask, axis = 2)
-#    mask = tf.reshape(mask, [-1, 128*128])
+    # calculate weights
+    weight = tf.divide(1, freq)
+    if flag_debug:    
+        weight = tf.Print(weight, [weight], message="Weight (unnormalized): ")
+    
+    # normalize weights
+    weight = tf.divide(weight, tf.reduce_sum(weight))
+    weight = tf.multiply(weight, nb_classes)    
+    if flag_debug:    
+        weight = tf.Print(weight, [weight], message="Weight (normalized): ")
 
-    return tf.multiply(K.categorical_crossentropy(y_pred, y_true), mask)
+    # enlarge vector to prepare for multiplication    
+    weight = tf.reshape(weight, [1, 1, nb_classes])
+
+    # multiply true labels with weights to get weight for each pixel 
+    mask = tf.multiply(y_true, weight)
+    mask = tf.reduce_max(mask, axis = 2)
+
+    loss =  tf.multiply(keras.metrics.categorical_crossentropy(y_pred, y_true), mask)
+    
+    return loss
