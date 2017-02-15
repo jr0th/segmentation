@@ -3,6 +3,7 @@ data/
 logs/
 checkpoints/
 out/
+results/
 
 # PYTHON CLUTTER
 __pycache__/
