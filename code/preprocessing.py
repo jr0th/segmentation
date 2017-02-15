@@ -77,6 +77,6 @@ def images_to_numpy(img_dir, ):
     numpy.save(img_dir + "/y.npy", y)
 
 # create training data
-images_to_numpy("../data/training")
-images_to_numpy("../data/test")
-images_to_numpy("../data/validation")
+images_to_numpy("../data/set01/training")
+images_to_numpy("../data/set01/test")
+images_to_numpy("../data/set01/validation")

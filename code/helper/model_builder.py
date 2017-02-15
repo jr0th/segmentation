@@ -2,9 +2,9 @@ import keras.layers
 import keras.models
 
 # hyperparameters TODO maybe move to main file?
-FLAG_BN = True
+FLAG_BN = False
 FLAG_DO = True
-CONST_DO_RATE = 0.1
+CONST_DO_RATE = 0.5
 
 def get_model(dim1, dim2, ):
     

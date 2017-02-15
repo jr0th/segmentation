@@ -2,7 +2,7 @@ import keras.metrics
 import tensorflow as tf
 
 def w_categorical_crossentropy(y_true, y_pred):
-    flag_debug = True
+    flag_debug = False
 
     # get number of classes
     nb_classes = y_pred.get_shape()[2].value

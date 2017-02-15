@@ -30,7 +30,7 @@ out_dir = '../out/'
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "1"
+configuration.gpu_options.visible_device_list = "0"
 
 session = tf.Session(config = configuration)
 
@@ -38,9 +38,9 @@ session = tf.Session(config = configuration)
 keras.backend.set_session(session)
 
 # load  x
-training_x = np.load("../data/training/x.npy")
-test_x = np.load("../data/test/x.npy")
-validation_x = np.load("../data/validation/x.npy")
+training_x = np.load("../data/set01/training/x.npy")
+test_x = np.load("../data/set01/test/x.npy")
+validation_x = np.load("../data/set01/validation/x.npy")
 
 print(training_x.shape)
 print(test_x.shape)
@@ -53,9 +53,9 @@ validation_x = validation_x / 255
 
 
 # load y
-training_y = np.load("../data/training/y.npy")
-test_y = np.load("../data/test/y.npy")
-validation_y = np.load("../data/validation/y.npy")
+training_y = np.load("../data/set01/training/y.npy")
+test_y = np.load("../data/set01/test/y.npy")
+validation_y = np.load("../data/set01/validation/y.npy")
 
 print(training_y.shape)
 print(test_y.shape)
@@ -89,32 +89,28 @@ print(class_weights)
 
 # build model
 model = helper.model_builder.get_model(dim1, dim2)
+# loss = "categorical_crossentropy"
+loss = helper.objectives.w_categorical_crossentropy
 
-loss = "categorical_crossentropy"
 # TODO include precision and recall
 metrics = ["categorical_accuracy"]
 optimizer = keras.optimizers.RMSprop(lr = const_lr)
 
 # model.compile(loss=loss,  metrics=metrics, optimizer=optimizer)
-model.compile(loss=helper.objectives.w_categorical_crossentropy, metrics=metrics, optimizer=optimizer)
+model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 
-# add callbacks
-
+# CALLBACKS
 # TODO implement early stopping
 # callback_early_stopping = keras.callbacks.EarlyStopping(patience=4)
-
 # save model after each epoch
 callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="../checkpoints/checkpoint.hdf5", save_weights_only=True, save_best_only=True)
-
 # collect logs about each batch
 callback_batch_stats = helper.batch_logger.BatchLogger(metrics, verbose=False)
-
 callback_csv = keras.callbacks.CSVLogger(filename="../logs/log.csv")
-
 callbacks=[callback_batch_stats, callback_model_checkpoint, callback_csv]
 
 # TRAIN
-statistics = model.fit(nb_epoch=5, batch_size=60, class_weight=class_weights, validation_data=(validation_x, validation_y_vec), x=training_x, y=training_y_vec, callbacks = callbacks , verbose = 1)
+statistics = model.fit(nb_epoch=300, batch_size=60, class_weight=class_weights, validation_data=(validation_x, validation_y_vec), x=training_x, y=training_y_vec, callbacks = callbacks , verbose = 1)
 
 
 plt.figure()
