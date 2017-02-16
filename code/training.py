@@ -25,6 +25,7 @@ import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
+data_dir = "../data/set01/"
 out_dir = '../out/'
 
 # build session running on GPU 1
@@ -37,9 +38,9 @@ session = tf.Session(config = configuration)
 keras.backend.set_session(session)
 
 # load  x
-training_x = np.load("../data/set01/training/x.npy")
-test_x = np.load("../data/set01/test/x.npy")
-validation_x = np.load("../data/set01/validation/x.npy")
+training_x = np.load(data_dir+"training/x.npy")
+test_x = np.load(data_dir+"test/x.npy")
+validation_x = np.load(data_dir+"validation/x.npy")
 
 print(training_x.shape)
 print(test_x.shape)
@@ -52,9 +53,9 @@ validation_x = validation_x / 255
 
 
 # load y
-training_y = np.load("../data/set01/training/y.npy")
-test_y = np.load("../data/set01/test/y.npy")
-validation_y = np.load("../data/set01/validation/y.npy")
+training_y = np.load(data_dir+"training/y.npy")
+test_y = np.load(data_dir+"test/y.npy")
+validation_y = np.load(data_dir+"validation/y.npy")
 
 print(training_y.shape)
 print(test_y.shape)
@@ -76,16 +77,6 @@ print(np.unique(validation_y_vec))
 dim1 = training_x.shape[1]
 dim2 = training_x.shape[2]
 
-# get class weights
-freq = scipy.stats.itemfreq(np.argmax(training_y[0,:,:,:], axis = 2))
-print(freq)
-freq_df = pd.DataFrame(freq[:,1]/np.sum(freq[:,1]), ['background', 'interior', 'boundary'], columns=['freq'])
-
-print(freq_df)
-
-class_weights = list(1/freq_df["freq"])
-print(class_weights)
-
 # build model
 model = helper.model_builder.get_model(dim1, dim2)
 loss = "categorical_crossentropy"
@@ -99,8 +90,6 @@ optimizer = keras.optimizers.RMSprop(lr = const_lr)
 model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 
 # CALLBACKS
-# TODO implement early stopping
-# callback_early_stopping = keras.callbacks.EarlyStopping(patience=4)
 # save model after each epoch
 callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="../checkpoints/checkpoint.hdf5", save_weights_only=True, save_best_only=True)
 # collect logs about each batch
