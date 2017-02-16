@@ -19,7 +19,7 @@ import tensorflow as tf
 import numpy as np
 
 import matplotlib
-matplotlib.use('PDF')
+matplotlib.use('SVG')
 
 import matplotlib.pyplot as plt
 
@@ -31,7 +31,6 @@ out_dir = '../out/'
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
 configuration.gpu_options.visible_device_list = "0"
-
 session = tf.Session(config = configuration)
 
 # apply session
@@ -61,7 +60,7 @@ print(training_y.shape)
 print(test_y.shape)
 print(validation_y.shape)
 
-# reshape # TODO in network
+# reshape y to fit network output
 training_y_vec = training_y.reshape((-1, 128 * 128, 3))
 test_y_vec = test_y.reshape((-1,128 * 128, 3))
 validation_y_vec = validation_y.reshape((-1,128 * 128, 3))
@@ -89,8 +88,8 @@ print(class_weights)
 
 # build model
 model = helper.model_builder.get_model(dim1, dim2)
-# loss = "categorical_crossentropy"
-loss = helper.objectives.w_categorical_crossentropy
+loss = "categorical_crossentropy"
+# loss = helper.objectives.w_categorical_crossentropy
 
 # TODO include precision and recall
 metrics = ["categorical_accuracy"]
@@ -107,60 +106,15 @@ callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="../checkpo
 # collect logs about each batch
 callback_batch_stats = helper.batch_logger.BatchLogger(metrics, verbose=False)
 callback_csv = keras.callbacks.CSVLogger(filename="../logs/log.csv")
-callbacks=[callback_batch_stats, callback_model_checkpoint, callback_csv]
+callback_tensorboard = keras.callbacks.TensorBoard(log_dir='../logs/logs_123', histogram_freq=1)
+callbacks=[callback_batch_stats, callback_model_checkpoint, callback_csv, callback_tensorboard]
 
 # TRAIN
-statistics = model.fit(nb_epoch=300, batch_size=60, class_weight=class_weights, validation_data=(validation_x, validation_y_vec), x=training_x, y=training_y_vec, callbacks = callbacks , verbose = 1)
-
-
-plt.figure()
-
-plt.xlabel("Epoch")
-plt.ylabel("Loss")
-plt.plot(statistics.history["loss"])
-plt.plot(statistics.history["val_loss"])
-plt.legend(["Training", "Validation"])
-
-plt.savefig(out_dir + "plot_loss")
-
-
-plt.figure()
-
-plt.xlabel("Epoch")
-plt.ylabel("Accuracy")
-plt.plot(statistics.history["categorical_accuracy"])
-plt.plot(statistics.history["val_categorical_accuracy"])
-plt.legend(["Training", "Validation"])
-
-plt.savefig(out_dir + "plot_accuracy")
-
-
-plt.figure()
-
-plt.xlabel("Batch")
-plt.ylabel("Metric")
-plt.plot(callback_batch_stats.losses['loss'])
-for metric in metrics:
-    plt.plot(callback_batch_stats.losses[metric])
-plt.legend(['loss'] + metrics)
-
-plt.savefig(out_dir + "plot_batch_metrics")
-
-
-plt.figure()
-
-plt.xlabel("Batch")
-plt.ylabel("Size")
-plt.plot(callback_batch_stats.losses['size'])   
-plt.legend(['size'])
-
-plt.savefig(out_dir + "plot_batch_size")
-
+statistics = model.fit(nb_epoch=10, batch_size=60, class_weight=class_weights, validation_data=(validation_x, validation_y_vec), x=training_x, y=training_y_vec, callbacks = callbacks , verbose = 1)
 
 # print test results
 res = model.evaluate(test_x, test_y_vec)
 print(res)
-
 
 # visualize some test
 prediction_test = model.predict(test_x).reshape((-1, 128, 128, 3))

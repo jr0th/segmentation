@@ -1,9 +1,10 @@
 import keras.layers
 import keras.models
+import tensorflow as tf
 
 # hyperparameters TODO maybe move to main file?
 FLAG_BN = False
-FLAG_DO = True
+FLAG_DO = False
 CONST_DO_RATE = 0.5
 
 def get_model(dim1, dim2, ):
@@ -15,7 +16,7 @@ def get_model(dim1, dim2, ):
 
     # DOWN
 
-    a = keras.layers.Convolution2D(64, 3, 3, **option_dict_conv)(x)
+    a = keras.layers.Convolution2D(64, 3, 3, **option_dict_conv)(x)  
     if FLAG_BN:
         a = keras.layers.BatchNormalization(**option_dict_bn)(a)
     if FLAG_DO:
