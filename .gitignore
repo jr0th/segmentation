@@ -7,3 +7,6 @@ results/
 
 # PYTHON CLUTTER
 __pycache__/
+
+# IPYTHON NOTEBOOK CLUTTER
+.ibynb_checkpoints
