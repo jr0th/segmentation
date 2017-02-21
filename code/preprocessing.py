@@ -54,11 +54,17 @@ def images_to_numpy(img_dir, ):
     load_pattern_x = img_dir + "/x/*.png"
     load_pattern_y = img_dir + "/y/*.png"
 
+    print('open images')
     images = skimage.io.imread_collection(load_pattern_x)
+    print('open labels')
     labels = skimage.io.imread_collection(load_pattern_y)
-
+    print('done opening stuff')
+    
+    print('window images')
     x = window_gray(images)
+    print('window labels')
     y = window_gray(labels)
+    print('done windowing stuff')
 
     # y needs some more processing
     y = gray_to_class(y)
@@ -77,6 +83,6 @@ def images_to_numpy(img_dir, ):
     numpy.save(img_dir + "/y.npy", y)
 
 # create training data
-images_to_numpy("../data/set01/training")
-images_to_numpy("../data/set01/test")
-images_to_numpy("../data/set01/validation")
+images_to_numpy("../data/set03/training")
+images_to_numpy("../data/set03/test")
+images_to_numpy("../data/set03/validation")
