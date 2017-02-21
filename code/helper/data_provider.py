@@ -21,7 +21,6 @@ def data_from_array(data_dir):
     validation_y = np.load(data_dir+"validation/y.npy")
 
     print(training_y.shape)
-    print("hier")
     print(test_y.shape)
     print(validation_y.shape)
     
