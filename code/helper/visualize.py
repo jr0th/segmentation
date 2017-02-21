@@ -12,11 +12,11 @@ import numpy as np
 def visualize(pred_y, true_x, true_y, out_dir='.', label=''):
 
     # TODO
-    skimage.io.imsave(out_dir + "img_probmap_boundary_test.png", pred_y[1,:,:,2])
+    skimage.io.imsave(out_dir + label + "img_probmap_boundary_test.png", pred_y[1,:,:,2])
 
     plt.figure()
     plt.hist(pred_y[1,:,:,2].flatten())
-    plt.savefig(out_dir + 'hist_probmap_boundary')
+    plt.savefig(out_dir + label + 'hist_probmap_boundary')
 
     # print some for visual inspection
     nSamples = 5 # print all?
@@ -78,3 +78,43 @@ def visualize(pred_y, true_x, true_y, out_dir='.', label=''):
                '\n')
         f.close()
 
+def visualize_learning_stats(callback_batch_stats, statistics, out_dir, metrics):
+    plt.figure()
+
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.plot(statistics.history["loss"])
+    plt.plot(statistics.history["val_loss"])
+    plt.legend(["Training", "Validation"])
+
+    plt.savefig(out_dir + "plot_loss")
+    
+    plt.figure()
+
+    plt.xlabel("Epoch")
+    plt.ylabel("Accuracy")
+    plt.plot(statistics.history["categorical_accuracy"])
+    plt.plot(statistics.history["val_categorical_accuracy"])
+    plt.legend(["Training", "Validation"])
+
+    plt.savefig(out_dir + "plot_accuracy")
+
+    plt.figure()
+
+    plt.xlabel("Batch")
+    plt.ylabel("Metric")
+    plt.plot(callback_batch_stats.losses['loss'])
+    for metric in metrics:
+        plt.plot(callback_batch_stats.losses[metric])
+    plt.legend(['loss'] + metrics)
+
+    plt.savefig(out_dir + "plot_batch_metrics")
+
+    plt.figure()
+
+    plt.xlabel("Batch")
+    plt.ylabel("Size")
+    plt.plot(callback_batch_stats.losses['size'])   
+    plt.legend(['size'])
+
+    plt.savefig(out_dir + "plot_batch_size")

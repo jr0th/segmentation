@@ -8,6 +8,7 @@ import helper.batch_logger
 import helper.model_builder
 import helper.visualize
 import helper.objectives
+import helper.data_provider
 
 import skimage.io
 import sklearn.metrics
@@ -25,57 +26,41 @@ import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
-data_dir = "../data/set01/"
-out_dir = '../out/'
+data_dir = "../data/set02/"
+data_type = "array" # "images"
+out_dir = "../out/"
+
 
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "0"
+configuration.gpu_options.visible_device_list = "1"
 session = tf.Session(config = configuration)
 
 # apply session
 keras.backend.set_session(session)
 
-# load  x
-training_x = np.load(data_dir+"training/x.npy")
-test_x = np.load(data_dir+"test/x.npy")
-validation_x = np.load(data_dir+"validation/x.npy")
+if data_type == "array":
+    [training_x, training_y, validation_x, validation_y, test_x, test_y] = helper.data_provider.data_from_array(data_dir)
+    
+    # reshape y to fit network output
+    training_y_vec = training_y.reshape((-1, 128 * 128, 3))
+    test_y_vec = test_y.reshape((-1,128 * 128, 3))
+    validation_y_vec = validation_y.reshape((-1,128 * 128, 3))
 
-print(training_x.shape)
-print(test_x.shape)
-print(validation_x.shape)
+    print(training_y_vec.shape)
+    print(test_y_vec.shape)
+    print(validation_y_vec.shape)
 
-# normalize
-training_x = training_x / 255
-test_x = test_x / 255
-validation_x = validation_x / 255
+    print(np.unique(training_y_vec))
+    print(np.unique(test_y_vec))
+    print(np.unique(validation_y_vec))
 
-
-# load y
-training_y = np.load(data_dir+"training/y.npy")
-test_y = np.load(data_dir+"test/y.npy")
-validation_y = np.load(data_dir+"validation/y.npy")
-
-print(training_y.shape)
-print(test_y.shape)
-print(validation_y.shape)
-
-# reshape y to fit network output
-training_y_vec = training_y.reshape((-1, 128 * 128, 3))
-test_y_vec = test_y.reshape((-1,128 * 128, 3))
-validation_y_vec = validation_y.reshape((-1,128 * 128, 3))
-
-print(training_y_vec.shape)
-print(test_y_vec.shape)
-print(validation_y_vec.shape)
-
-print(np.unique(training_y_vec))
-print(np.unique(test_y_vec))
-print(np.unique(validation_y_vec))
-
-dim1 = training_x.shape[1]
-dim2 = training_x.shape[2]
+    dim1 = training_x.shape[1]
+    dim2 = training_x.shape[2]
+    
+elif data_type == "images":
+    [training_generator, test_generator, validation_generator, dim1, dim2] = helper.data_provider.data_from_images(data_dir)
 
 # build model
 model = helper.model_builder.get_model(dim1, dim2)
@@ -99,17 +84,49 @@ callback_tensorboard = keras.callbacks.TensorBoard(log_dir='../logs/logs_123', h
 callbacks=[callback_batch_stats, callback_model_checkpoint, callback_csv, callback_tensorboard]
 
 # TRAIN
-statistics = model.fit(nb_epoch=10, batch_size=60, class_weight=class_weights, validation_data=(validation_x, validation_y_vec), x=training_x, y=training_y_vec, callbacks = callbacks , verbose = 1)
+nb_epoch = 3
+batch_size = 60
 
-# print test results
-res = model.evaluate(test_x, test_y_vec)
-print(res)
+# generator only params
+nb_batches = 20
 
-# visualize some test
-prediction_test = model.predict(test_x).reshape((-1, 128, 128, 3))
-helper.visualize.visualize(prediction_test, test_x, test_y, out_dir, 'test')
+if data_type == "array":
+    statistics = model.fit(nb_epoch=nb_epoch,
+                           batch_size=batch_size,
+                           x=training_x,
+                           y=training_y_vec,
+                           validation_data=(validation_x, validation_y_vec),
+                           callbacks = callbacks,
+                           verbose = 1)
+    
+    # print test results
+    res = model.evaluate(test_x, test_y_vec)
+    print(res)
 
-# visualize some training
-prediction_training = model.predict(training_x).reshape((-1, 128, 128, 3))
-helper.visualize.visualize(prediction_training, training_x, training_y, out_dir, 'training')
+    # visualize learning stats
+    helper.visualize.visualize_learning_stats(callback_batch_stats, statistics, out_dir, metrics)
+
+    # visualize some test
+    prediction_test = model.predict(test_x).reshape((-1, 128, 128, 3))
+    helper.visualize.visualize(prediction_test, test_x, test_y, out_dir, 'test')
+
+    # visualize some training
+    prediction_training = model.predict(training_x).reshape((-1, 128, 128, 3))
+    helper.visualize.visualize(prediction_training, training_x, training_y, out_dir, 'training')
+    
+elif data_type == "images":
+    statistics = model.fit_generator(nb_epoch=nb_epoch,
+                                     batch_size=batch_size,
+                                     samples_per_epoch = nb_batches * batch_size,
+                                     generator = training_generator,
+                                     validation_data = validation_generator,
+                                     nb_val_samples=batch_size,
+                                     callbacks=callbacks,
+                                     verbose=1)
+    
+    # print test results
+    res = mode.evaluate_generator(generator = test_generator, val_samples = batch_size)
+    print(res)
+    
+    # TODO write some visualization for this case.
 

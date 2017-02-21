@@ -1,3 +1,5 @@
+import numpy as np
+
 def data_from_array(data_dir):
     # load  x
     training_x = np.load(data_dir+"training/x.npy")
@@ -19,23 +21,11 @@ def data_from_array(data_dir):
     validation_y = np.load(data_dir+"validation/y.npy")
 
     print(training_y.shape)
+    print("hier")
     print(test_y.shape)
     print(validation_y.shape)
-
-    # reshape y to fit network output
-    training_y_vec = training_y.reshape((-1, 128 * 128, 3))
-    test_y_vec = test_y.reshape((-1,128 * 128, 3))
-    validation_y_vec = validation_y.reshape((-1,128 * 128, 3))
-
-    print(training_y_vec.shape)
-    print(test_y_vec.shape)
-    print(validation_y_vec.shape)
-
-    print(np.unique(training_y_vec))
-    print(np.unique(test_y_vec))
-    print(np.unique(validation_y_vec))
     
-    return [training_x, training_y_vec, validation_x, validation_y_vec, test_x, test_y_vec]
+    return [training_x, training_y, validation_x, validation_y, test_x, test_y]
 
 def data_from_images(data_dir):
     return 0
