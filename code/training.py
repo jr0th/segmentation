@@ -84,7 +84,7 @@ callback_tensorboard = keras.callbacks.TensorBoard(log_dir='../logs/logs_123', h
 callbacks=[callback_batch_stats, callback_model_checkpoint, callback_csv, callback_tensorboard]
 
 # TRAIN
-nb_epoch = 3
+nb_epoch = 30
 batch_size = 60
 
 # generator only params

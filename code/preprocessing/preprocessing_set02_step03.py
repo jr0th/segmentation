@@ -27,8 +27,8 @@ def window_gray(images):
 
 def gray_to_class(img_gray):
     img_class = img_gray
-    img_class[img_class == 255] = 1
-    img_class[img_class == 1] = 2
+    img_class[img_class == 1] = 1 # cell
+    img_class[img_class == 255] = 2 # boundary
     
     return img_class
     
