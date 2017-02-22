@@ -34,3 +34,17 @@ def w_categorical_crossentropy(y_true, y_pred):
     loss =  tf.multiply(keras.metrics.categorical_crossentropy(y_pred, y_true), mask)
     
     return loss
+
+def categorical_crossentropy_3d(y_true, y_pred):
+
+    # get number of classes
+    nb_classes = y_pred.get_shape()[3].value
+    dim1 = y_pred.get_shape()[1].value
+    dim2 = y_pred.get_shape()[2].value
+
+    y_pred_reshape = tf.reshape(y_pred, (-1, dim1 * dim2, nb_classes))
+    y_true_reshape = tf.reshape(y_true, (-1, dim1 * dim2, nb_classes))
+
+    loss = keras.metrics.categorical_crossentropy(y_pred_reshape, y_true_reshape)
+    
+    return loss

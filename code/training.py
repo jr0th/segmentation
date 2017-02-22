@@ -4,6 +4,9 @@ import keras.layers
 import keras.models
 import keras.optimizers
 
+import matplotlib
+matplotlib.use('SVG')
+
 import helper.batch_logger
 import helper.model_builder
 import helper.visualize
@@ -19,16 +22,19 @@ import pandas as pd
 import tensorflow as tf
 import numpy as np
 
-import matplotlib
-matplotlib.use('SVG')
-
 import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
-data_dir = "../data/set02/"
-data_type = "array" # "images"
+data_dir = "/home/jr0th/github/segmentation/data/set03/"
+data_type = "images" # "images" or "array"
 out_dir = "../out/"
+
+nb_epoch = 3
+batch_size = 5
+
+# generator only params
+nb_batches = 10
 
 
 # build session running on GPU 1
@@ -59,13 +65,16 @@ if data_type == "array":
     dim1 = training_x.shape[1]
     dim2 = training_x.shape[2]
     
+    # build model
+    model = helper.model_builder.get_model(dim1, dim2)
+    loss = "categorical_crossentropy"
+    # loss = helper.objectives.w_categorical_crossentropy
+    
 elif data_type == "images":
-    [training_generator, test_generator, validation_generator, dim1, dim2] = helper.data_provider.data_from_images(data_dir)
-
-# build model
-model = helper.model_builder.get_model(dim1, dim2)
-loss = "categorical_crossentropy"
-# loss = helper.objectives.w_categorical_crossentropy
+    [training_generator, validation_generator, test_generator, dim1, dim2] = helper.data_provider.data_from_images(data_dir, batch_size=batch_size)
+    model = helper.model_builder.get_model_3d_output(dim1, dim2)
+    loss = helper.objectives.categorical_crossentropy_3d
+    
 
 # TODO include precision and recall
 metrics = ["categorical_accuracy"]
@@ -80,16 +89,10 @@ callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="../checkpo
 # collect logs about each batch
 callback_batch_stats = helper.batch_logger.BatchLogger(metrics, verbose=False)
 callback_csv = keras.callbacks.CSVLogger(filename="../logs/log.csv")
-callback_tensorboard = keras.callbacks.TensorBoard(log_dir='../logs/logs_123', histogram_freq=1)
+callback_tensorboard = keras.callbacks.TensorBoard(log_dir='../logs/logs_tensorboard', histogram_freq=1)
 callbacks=[callback_batch_stats, callback_model_checkpoint, callback_csv, callback_tensorboard]
 
 # TRAIN
-nb_epoch = 30
-batch_size = 60
-
-# generator only params
-nb_batches = 20
-
 if data_type == "array":
     statistics = model.fit(nb_epoch=nb_epoch,
                            batch_size=batch_size,
@@ -116,7 +119,6 @@ if data_type == "array":
     
 elif data_type == "images":
     statistics = model.fit_generator(nb_epoch=nb_epoch,
-                                     batch_size=batch_size,
                                      samples_per_epoch = nb_batches * batch_size,
                                      generator = training_generator,
                                      validation_data = validation_generator,
@@ -125,8 +127,13 @@ elif data_type == "images":
                                      verbose=1)
     
     # print test results
-    res = mode.evaluate_generator(generator = test_generator, val_samples = batch_size)
+    res = model.evaluate_generator(generator = test_generator, val_samples = batch_size)
     print(res)
     
-    # TODO write some visualization for this case.
-
+    # visualize learning stats
+    helper.visualize.visualize_learning_stats(callback_batch_stats, statistics, out_dir, metrics)
+    
+    # visualize some test
+    test_data = test_generator[:10]
+    prediction_test = model.predict(test_data[0])
+    helper.visualize.visualize(prediction_test, test_data[0], test_data[1], out_dir, 'test')
