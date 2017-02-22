@@ -133,7 +133,4 @@ elif data_type == "images":
     # visualize learning stats
     helper.visualize.visualize_learning_stats(callback_batch_stats, statistics, out_dir, metrics)
     
-    # visualize some test
-    test_data = test_generator[:10]
-    prediction_test = model.predict(test_data[0])
-    helper.visualize.visualize(prediction_test, test_data[0], test_data[1], out_dir, 'test')
+    # TODO visualize some test
