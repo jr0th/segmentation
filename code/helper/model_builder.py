@@ -3,8 +3,8 @@ import keras.models
 import tensorflow as tf
 
 # hyperparameters TODO maybe move to main file?
-FLAG_BN = False
-FLAG_DO = False
+FLAG_BN = True
+FLAG_DO = True
 CONST_DO_RATE = 0.5
 
 def get_model(dim1, dim2):

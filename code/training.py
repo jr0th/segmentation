@@ -30,17 +30,16 @@ data_dir = "/home/jr0th/github/segmentation/data/set03/"
 data_type = "images" # "images" or "array"
 out_dir = "../out/"
 
-nb_epoch = 3
-batch_size = 5
+nb_epoch = 1000
+batch_size = 10
 
 # generator only params
 nb_batches = 10
 
-
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "1"
+configuration.gpu_options.visible_device_list = "2"
 session = tf.Session(config = configuration)
 
 # apply session

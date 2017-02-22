@@ -29,8 +29,8 @@ def data_from_array(data_dir):
 
 def data_from_images(data_dir, batch_size):
 
-    dim1 = 128
-    dim2 = 128
+    dim1 = 256
+    dim2 = 256
     
     generator_train_x = keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
     generator_train_y = keras.preprocessing.image.ImageDataGenerator()
