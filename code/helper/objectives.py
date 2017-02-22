@@ -1,6 +1,8 @@
 import keras.metrics
 import tensorflow as tf
 
+flag_debug = True
+
 def w_categorical_crossentropy(y_true, y_pred):
     flag_debug = False
 
@@ -35,8 +37,14 @@ def w_categorical_crossentropy(y_true, y_pred):
     
     return loss
 
+    
+def w_categorical_crossentropy_3d(y_true, y_pred):
+    # TODO
+    return 0
+    
 def categorical_crossentropy_3d(y_true, y_pred):
-
+    # actually unused, keras.metrics.categorical_crossentropy als works with 3D tensors
+    
     # get dimensions
     dim1 = y_pred.get_shape()[1].value
     dim2 = y_pred.get_shape()[2].value
@@ -45,8 +53,5 @@ def categorical_crossentropy_3d(y_true, y_pred):
     y_pred_reshape = tf.reshape(y_pred, (-1, dim1 * dim2, nb_classes))
     y_true_reshape = tf.reshape(y_true, (-1, dim1 * dim2, nb_classes))
     
-    y_pred_reshape = tf.Print(y_pred_reshape, [y_pred_reshape, y_true_reshape], message = 'y_pred, y_true')
-
     loss = keras.metrics.categorical_crossentropy(y_true = y_true_reshape, y_pred = y_pred_reshape)
-    
     return loss
