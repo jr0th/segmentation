@@ -30,16 +30,16 @@ data_dir = "/home/jr0th/github/segmentation/data/set03/"
 data_type = "images" # "images" or "array"
 out_dir = "../out/"
 
-nb_epoch = 1000
-batch_size = 10
+nb_epoch = 10
+batch_size = 2
 
 # generator only params
-nb_batches = 10
+nb_batches = 2
 
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "2"
+configuration.gpu_options.visible_device_list = "0"
 session = tf.Session(config = configuration)
 
 # apply session
@@ -72,7 +72,8 @@ if data_type == "array":
 elif data_type == "images":
     [training_generator, validation_generator, test_generator, dim1, dim2] = helper.data_provider.data_from_images(data_dir, batch_size=batch_size)
     model = helper.model_builder.get_model_3d_output(dim1, dim2)
-    loss = helper.objectives.categorical_crossentropy_3d
+    loss = "categorical_crossentropy"
+    # loss = helper.objectives.w_categorical_crossentropy_3d
     
 
 # TODO include precision and recall
