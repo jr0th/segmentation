@@ -30,16 +30,16 @@ data_dir = "/home/jr0th/github/segmentation/data/set03/"
 data_type = "images" # "images" or "array"
 out_dir = "../out/"
 
-nb_epoch = 10
-batch_size = 2
+nb_epoch = 3
+batch_size = 10
 
 # generator only params
-nb_batches = 2
+nb_batches = 20
 
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "0"
+configuration.gpu_options.visible_device_list = "2"
 session = tf.Session(config = configuration)
 
 # apply session
@@ -121,7 +121,7 @@ elif data_type == "images":
     statistics = model.fit_generator(nb_epoch=nb_epoch,
                                      samples_per_epoch = nb_batches * batch_size,
                                      generator = training_generator,
-                                     validation_data = validation_generator,
+                                    # validation_data = validation_generator,
                                      nb_val_samples=batch_size,
                                      callbacks=callbacks,
                                      verbose=1)

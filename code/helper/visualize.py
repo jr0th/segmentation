@@ -9,7 +9,7 @@ import sklearn.metrics
 
 import numpy as np
 
-def visualize(pred_y, true_x, true_y, out_dir='.', label=''):
+def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
 
     # TODO
     skimage.io.imsave(out_dir + label + "img_probmap_boundary_test.png", pred_y[1,:,:,2])
