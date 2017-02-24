@@ -20,10 +20,10 @@ model = helper.model_builder.get_model_3d_output(dim1, dim2)
 model.load_weights(weights_path)
 
 # get one batch of data from the generator
-(x, y) = next(test_generator)
+(test_x, test_y) = next(test_generator)
 
 # get model predictions
-y_pred = model.predict_on_batch(x)
+y_pred = model.predict_on_batch(test_x)
 
 # visualize them
-helper.visualize.visualize(y_pred, x, y, out_dir=out_dir, label=out_label)
+helper.visualize.visualize(y_pred, test_x, test_y, out_dir=out_dir, label=out_label)

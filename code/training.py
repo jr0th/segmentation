@@ -26,8 +26,8 @@ import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
-data_dir = "/home/jr0th/github/segmentation/data/set03/"
-data_type = "images" # "images" or "array"
+data_dir = "/home/jr0th/github/segmentation/data/set02/"
+data_type = "array"# "images" # "images" or "array"
 out_dir = "../out/"
 
 nb_epoch = 3
@@ -108,14 +108,6 @@ if data_type == "array":
 
     # visualize learning stats
     helper.visualize.visualize_learning_stats(callback_batch_stats, statistics, out_dir, metrics)
-
-    # visualize some test
-    prediction_test = model.predict(test_x).reshape((-1, 128, 128, 3))
-    helper.visualize.visualize(prediction_test, test_x, test_y, out_dir, 'test')
-
-    # visualize some training
-    prediction_training = model.predict(training_x).reshape((-1, 128, 128, 3))
-    helper.visualize.visualize(prediction_training, training_x, training_y, out_dir, 'training')
     
 elif data_type == "images":
     statistics = model.fit_generator(nb_epoch=nb_epoch,
@@ -132,5 +124,3 @@ elif data_type == "images":
     
     # visualize learning stats
     helper.visualize.visualize_learning_stats(callback_batch_stats, statistics, out_dir, metrics)
-    
-    # TODO visualize some test

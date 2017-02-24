@@ -12,14 +12,14 @@ import numpy as np
 def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
 
     # TODO
-    skimage.io.imsave(out_dir + label + "img_probmap_boundary_test.png", pred_y[1,:,:,2])
+    skimage.io.imsave(out_dir + label + '_' + 'img_probmap_boundary_test.png', pred_y[1,:,:,2])
 
     plt.figure()
     plt.hist(pred_y[1,:,:,2].flatten())
-    plt.savefig(out_dir + label + 'hist_probmap_boundary')
+    plt.savefig(out_dir + label + '_' + 'hist_probmap_boundary')
 
-    # print some for visual inspection
-    nSamples = 5 # print all?
+    # print all samples for visual inspection
+    nSamples = pred_y.shape[0]
 
     for sampleIndex in range(nSamples):
         nCols = 4
