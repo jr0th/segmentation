@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 out_label = 'pred'
 out_dir = '/home/jr0th/github/segmentation/out/'
-data_dir = '/home/jr0th/github/segmentation/data/set01/'
+data_dir = '/home/jr0th/github/segmentation/data/set02/'
 # use latest checkpoint
 weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint.hdf5'
 
@@ -23,7 +23,7 @@ model = helper.model_builder.get_model(dim1, dim2)
 model.load_weights(weights_path)
 
 # get model predictions
-y_pred = model.predict_on_batch(test_x).reshape((-1, 128, 128, 3))
+y_pred = model.predict(test_x).reshape((-1, 128, 128, 3))
 
 # visualize them
 helper.visualize.visualize(y_pred, test_x, test_y, out_dir=out_dir, label=out_label)

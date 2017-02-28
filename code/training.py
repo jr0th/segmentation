@@ -27,14 +27,14 @@ import matplotlib.pyplot as plt
 # constants
 const_lr = 1e-4
 data_dir = "/home/jr0th/github/segmentation/data/set02/"
-data_type = "array"# "images" # "images" or "array"
+data_type = "array" # "images" or "array"
 out_dir = "../out/"
 
-nb_epoch = 3
-batch_size = 10
+nb_epoch = 50
+batch_size = 5
 
 # generator only params
-nb_batches = 20
+nb_batches = 5
 
 # build session running on GPU 1
 configuration = tf.ConfigProto()
