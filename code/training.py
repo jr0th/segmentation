@@ -26,15 +26,16 @@ import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
-data_dir = "/home/jr0th/github/segmentation/data/set02/"
-data_type = "array" # "images" or "array"
+data_dir = "/home/jr0th/github/segmentation/data/BBBC022/"
+data_type = "images" # "images" or "array"
 out_dir = "../out/"
 
-nb_epoch = 50
+nb_epoch = 10
 batch_size = 5
 
 # generator only params
 nb_batches = 5
+bit_depth = 8
 
 # build session running on GPU 1
 configuration = tf.ConfigProto()
@@ -70,7 +71,7 @@ if data_type == "array":
     # loss = helper.objectives.w_categorical_crossentropy
     
 elif data_type == "images":
-    [training_generator, validation_generator, test_generator, dim1, dim2] = helper.data_provider.data_from_images(data_dir, batch_size=batch_size)
+    [training_generator, validation_generator, test_generator, dim1, dim2] = helper.data_provider.data_from_images(data_dir, batch_size=batch_size, bit_depth=bit_depth)
     model = helper.model_builder.get_model_3d_output(dim1, dim2)
     loss = "categorical_crossentropy"
     # loss = helper.objectives.w_categorical_crossentropy_3d
@@ -113,7 +114,7 @@ elif data_type == "images":
     statistics = model.fit_generator(nb_epoch=nb_epoch,
                                      samples_per_epoch = nb_batches * batch_size,
                                      generator = training_generator,
-                                    # validation_data = validation_generator,
+                                     validation_data = validation_generator,
                                      nb_val_samples=batch_size,
                                      callbacks=callbacks,
                                      verbose=1)

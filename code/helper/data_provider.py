@@ -27,16 +27,19 @@ def data_from_array(data_dir):
     
     return [training_x, training_y, validation_x, validation_y, test_x, test_y]
 
-def data_from_images(data_dir, batch_size):
+def data_from_images(data_dir, batch_size, bit_depth):
 
     dim1 = 256
     dim2 = 256
     
-    generator_train_x = keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
+    rescale_factor = 1./(2**bit_depth - 1)
+    print(rescale_factor)
+
+    generator_train_x = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
     generator_train_y = keras.preprocessing.image.ImageDataGenerator()
-    generator_validation_x = keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
+    generator_validation_x = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
     generator_validation_y = keras.preprocessing.image.ImageDataGenerator()
-    generator_test_x = keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
+    generator_test_x = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
     generator_test_y = keras.preprocessing.image.ImageDataGenerator()
     
     seed = 42
