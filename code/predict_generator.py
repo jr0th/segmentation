@@ -8,12 +8,13 @@ import matplotlib.pyplot as plt
 
 out_label = 'pred_generator'
 out_dir = '/home/jr0th/github/segmentation/out/'
-data_dir = '/home/jr0th/github/segmentation/data/set03/'
-weights_path = '/home/jr0th/github/segmentation/results/set03/0223_test/checkpoints/checkpoint.hdf5'
+data_dir = '/home/jr0th/github/segmentation/data/BBBC022/'
+weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint.hdf5'
 batch_size = 10
+bit_depth = 8
 
 # get generator for test data
-[_, _, test_generator, dim1, dim2] = helper.data_provider.data_from_images(data_dir, batch_size=batch_size)
+[_, _, test_generator, dim1, dim2] = helper.data_provider.data_from_images(data_dir, batch_size=batch_size, bit_depth=bit_depth)
 
 # build model and laod weights
 model = helper.model_builder.get_model_3d_output(dim1, dim2)

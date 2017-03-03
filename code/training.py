@@ -26,11 +26,11 @@ import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
-data_dir = "/home/jr0th/github/segmentation/data/BBBC022/"
+data_dir = "/home/jr0th/github/segmentation/data/BBBC022_1000/"
 data_type = "images" # "images" or "array"
 out_dir = "../out/"
 
-nb_epoch = 10
+nb_epoch = 100
 batch_size = 5
 
 # generator only params
