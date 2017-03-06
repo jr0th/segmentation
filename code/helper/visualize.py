@@ -78,7 +78,7 @@ def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
                '\n')
         f.close()
 
-def visualize_learning_stats(callback_batch_stats, statistics, out_dir, metrics):
+def visualize_learning_stats(statistics, out_dir, metrics):
     plt.figure()
 
     plt.xlabel("Epoch")
@@ -98,23 +98,3 @@ def visualize_learning_stats(callback_batch_stats, statistics, out_dir, metrics)
     plt.legend(["Training", "Validation"])
 
     plt.savefig(out_dir + "plot_accuracy")
-
-    plt.figure()
-
-    plt.xlabel("Batch")
-    plt.ylabel("Metric")
-    plt.plot(callback_batch_stats.losses['loss'])
-    for metric in metrics:
-        plt.plot(callback_batch_stats.losses[metric])
-    plt.legend(['loss'] + metrics)
-
-    plt.savefig(out_dir + "plot_batch_metrics")
-
-    plt.figure()
-
-    plt.xlabel("Batch")
-    plt.ylabel("Size")
-    plt.plot(callback_batch_stats.losses['size'])   
-    plt.legend(['size'])
-
-    plt.savefig(out_dir + "plot_batch_size")

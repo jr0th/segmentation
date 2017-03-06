@@ -1,6 +1,7 @@
 import keras.callbacks
 import pandas as pd
 
+# Watch out. Does not work with custom metrics as Pandas doesn't handle keys that are functions correctly.
 class BatchLogger(keras.callbacks.Callback):
 
     def __init__(self, metrics, verbose):

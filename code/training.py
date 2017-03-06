@@ -12,6 +12,7 @@ import helper.model_builder
 import helper.visualize
 import helper.objectives
 import helper.data_provider
+import helper.metrics
 
 import skimage.io
 import sklearn.metrics
@@ -26,11 +27,11 @@ import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
-data_dir = "/home/jr0th/github/segmentation/data/BBBC022_1000/"
-data_type = "images" # "images" or "array"
+data_dir = "/home/jr0th/github/segmentation/data/set01/"
+data_type = "array" # "images" or "array"
 out_dir = "../out/"
 
-nb_epoch = 100
+nb_epoch = 1
 batch_size = 5
 
 # generator only params
@@ -78,8 +79,8 @@ elif data_type == "images":
     
 
 # TODO include precision and recall
-metrics = ["categorical_accuracy"]
 optimizer = keras.optimizers.RMSprop(lr = const_lr)
+metrics = ["categorical_accuracy", "precision", "recall", helper.metrics.splits_and_merges]
 
 # model.compile(loss=loss,  metrics=metrics, optimizer=optimizer)
 model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
@@ -87,11 +88,9 @@ model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 # CALLBACKS
 # save model after each epoch
 callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="../checkpoints/checkpoint.hdf5", save_weights_only=True, save_best_only=True)
-# collect logs about each batch
-callback_batch_stats = helper.batch_logger.BatchLogger(metrics, verbose=False)
 callback_csv = keras.callbacks.CSVLogger(filename="../logs/log.csv")
 callback_tensorboard = keras.callbacks.TensorBoard(log_dir='../logs/logs_tensorboard', histogram_freq=1)
-callbacks=[callback_batch_stats, callback_model_checkpoint, callback_csv, callback_tensorboard]
+callbacks=[callback_model_checkpoint, callback_csv, callback_tensorboard] # callback_batch_stats, 
 
 # TRAIN
 if data_type == "array":
@@ -105,10 +104,6 @@ if data_type == "array":
     
     # print test results
     res = model.evaluate(test_x, test_y_vec)
-    print(res)
-
-    # visualize learning stats
-    helper.visualize.visualize_learning_stats(callback_batch_stats, statistics, out_dir, metrics)
     
 elif data_type == "images":
     statistics = model.fit_generator(nb_epoch=nb_epoch,
@@ -121,7 +116,8 @@ elif data_type == "images":
     
     # print test results
     res = model.evaluate_generator(generator = test_generator, val_samples = batch_size)
-    print(res)
     
-    # visualize learning stats
-    helper.visualize.visualize_learning_stats(callback_batch_stats, statistics, out_dir, metrics)
+# visualize learning stats
+helper.visualize.visualize_learning_stats(statistics, out_dir, metrics)
+print(res)
+print('Done! :)')
