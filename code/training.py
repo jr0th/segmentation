@@ -31,7 +31,7 @@ data_dir = "/home/jr0th/github/segmentation/data/set01/"
 data_type = "array" # "images" or "array"
 out_dir = "../out/"
 
-nb_epoch = 1
+nb_epoch = 3
 batch_size = 5
 
 # generator only params
@@ -77,9 +77,12 @@ elif data_type == "images":
     loss = "categorical_crossentropy"
     # loss = helper.objectives.w_categorical_crossentropy_3d
     
+
+# TODO include precision and recall
 optimizer = keras.optimizers.RMSprop(lr = const_lr)
 metrics = ["categorical_accuracy", "precision", "recall", helper.metrics.splits_and_merges]
 
+# model.compile(loss=loss,  metrics=metrics, optimizer=optimizer)
 model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 
 # CALLBACKS
