@@ -77,12 +77,9 @@ elif data_type == "images":
     loss = "categorical_crossentropy"
     # loss = helper.objectives.w_categorical_crossentropy_3d
     
-
-# TODO include precision and recall
 optimizer = keras.optimizers.RMSprop(lr = const_lr)
 metrics = ["categorical_accuracy", "precision", "recall", helper.metrics.splits_and_merges]
 
-# model.compile(loss=loss,  metrics=metrics, optimizer=optimizer)
 model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 
 # CALLBACKS
