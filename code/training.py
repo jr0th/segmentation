@@ -80,9 +80,8 @@ elif data_type == "images":
 
 # TODO include precision and recall
 optimizer = keras.optimizers.RMSprop(lr = const_lr)
-metrics = ["categorical_accuracy", "precision", "recall", helper.metrics.splits_and_merges]
-
-# model.compile(loss=loss,  metrics=metrics, optimizer=optimizer)
+metrics = [keras.metrics.categorical_accuracy, helper.metrics.recall, helper.metrics.precision]
+#, "precision", "recall"
 model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 
 # CALLBACKS
