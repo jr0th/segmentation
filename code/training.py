@@ -7,7 +7,7 @@ import keras.optimizers
 import matplotlib
 matplotlib.use('SVG')
 
-import helper.batch_logger
+import helper.callbacks
 import helper.model_builder
 import helper.visualize
 import helper.objectives
@@ -27,15 +27,15 @@ import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
-data_dir = "/home/jr0th/github/segmentation/data/set01/"
-data_type = "array" # "images" or "array"
+data_dir = "/home/jr0th/github/segmentation/data/BBBC022_100/"
+data_type = "images" # "images" or "array"
 out_dir = "../out/"
 
-nb_epoch = 3
-batch_size = 5
+nb_epoch = 5
+batch_size = 2
 
 # generator only params
-nb_batches = 5
+nb_batches = 2
 bit_depth = 8
 
 # build session running on GPU 1
@@ -89,7 +89,8 @@ model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="../checkpoints/checkpoint.hdf5", save_weights_only=True, save_best_only=True)
 callback_csv = keras.callbacks.CSVLogger(filename="../logs/log.csv")
 callback_tensorboard = keras.callbacks.TensorBoard(log_dir='../logs/logs_tensorboard', histogram_freq=1)
-callbacks=[callback_model_checkpoint, callback_csv, callback_tensorboard] # callback_batch_stats, 
+callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(log_dir='../logs/logs_tensorboard')
+callbacks=[callback_model_checkpoint, callback_csv, callback_splits_and_merges]
 
 # TRAIN
 if data_type == "array":
