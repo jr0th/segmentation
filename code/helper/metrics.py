@@ -34,14 +34,12 @@ def probmap_to_pred(probmap, boundary_boost_factor):
 def pred_to_label(pred, cell_min_size=300, cell_label=1):
     
     cell = (pred == cell_label)
-    print('cell: ', cell)
     # fix cells
     cell = skimage.morphology.remove_small_holes(cell, min_size=cell_min_size)
     cell = skimage.morphology.remove_small_objects(cell, min_size=cell_min_size)
-    print('fixed cell: ', cell)
+    
     # label cells only
     [label, num] = skimage.morphology.label(cell, return_num=True)
-    print('#cells detected: ', num)
     return label
 
 
@@ -54,6 +52,18 @@ def splits_and_merges(y_model_pred, y_gt_pred):
     # get number of detected nuclei
     nb_nuclei_gt = np.max(label_gt)
     nb_nuclei_model = np.max(label_model)
+    
+    # catch the case of an empty picture in model and gt
+    if nb_nuclei_gt == 0 and nb_nuclei_model == 0:
+        return [0, 0, 1]
+    
+    # catch the case of empty picture in model
+    if nb_nuclei_model == 0:
+        return [0, nb_nuclei_gt, 0]
+    
+    # catch the case of empty picture in gt
+    if nb_nuclei_gt == 0:
+        return [nb_nuclei_gt, 0, 0]
     
     # build IoU matrix
     IoUs = np.full((nb_nuclei_gt, nb_nuclei_model), -1, dtype = np.float32)
