@@ -31,11 +31,11 @@ data_dir = "/home/jr0th/github/segmentation/data/BBBC022_100/"
 data_type = "images" # "images" or "array"
 out_dir = "../out/"
 
-nb_epoch = 5
-batch_size = 2
+nb_epoch = 100
+batch_size = 3
 
 # generator only params
-nb_batches = 2
+nb_batches = 3
 bit_depth = 8
 
 # build session running on GPU 1
@@ -67,15 +67,17 @@ if data_type == "array":
     dim2 = training_x.shape[2]
     
     # build model
-    model = helper.model_builder.get_model(dim1, dim2)
+    model = helper.model_builder.get_model_3d_output(dim1, dim2)
     loss = "categorical_crossentropy"
-    # loss = helper.objectives.w_categorical_crossentropy
+
+    callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type = data_type, data = [validation_x, validation_y], log_dir='../logs/logs_tensorboard')
     
 elif data_type == "images":
     [training_generator, validation_generator, test_generator, dim1, dim2] = helper.data_provider.data_from_images(data_dir, batch_size=batch_size, bit_depth=bit_depth)
     model = helper.model_builder.get_model_3d_output(dim1, dim2)
     loss = "categorical_crossentropy"
-    # loss = helper.objectives.w_categorical_crossentropy_3d
+    
+    callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type = data_type, data = validation_generator, log_dir='../logs/logs_tensorboard')
     
 
 # TODO include precision and recall
@@ -89,7 +91,7 @@ model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="../checkpoints/checkpoint.hdf5", save_weights_only=True, save_best_only=True)
 callback_csv = keras.callbacks.CSVLogger(filename="../logs/log.csv")
 callback_tensorboard = keras.callbacks.TensorBoard(log_dir='../logs/logs_tensorboard', histogram_freq=1)
-callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(log_dir='../logs/logs_tensorboard')
+
 callbacks=[callback_model_checkpoint, callback_csv, callback_splits_and_merges]
 
 # TRAIN
@@ -97,13 +99,13 @@ if data_type == "array":
     statistics = model.fit(nb_epoch=nb_epoch,
                            batch_size=batch_size,
                            x=training_x,
-                           y=training_y_vec,
-                           validation_data=(validation_x, validation_y_vec),
+                           y=training_y,
+                           validation_data=(validation_x, validation_y),
                            callbacks = callbacks,
                            verbose = 1)
     
     # print test results
-    res = model.evaluate(test_x, test_y_vec)
+    res = model.evaluate(test_x, test_y)
     
 elif data_type == "images":
     statistics = model.fit_generator(nb_epoch=nb_epoch,
