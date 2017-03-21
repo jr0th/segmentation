@@ -1,11 +1,9 @@
 import keras.callbacks
-import keras.backend as K
 
 import helper.metrics
 
 import tensorflow as tf
 import pandas as pd
-
 import numpy as np
 
 boundary_boost_factor = 100
@@ -28,7 +26,6 @@ class SplitsAndMergesLogger(keras.callbacks.TensorBoard):
         
         self.result_placeholder = tf.placeholder(tf.float16, (3))
         
-        #self.summary_overdetection = tf.summary.scalar(tag_overdetection + 'new', tf.slice(self.result_placeholder, [0], [1]))
         self.value_over = tf.reduce_mean(tf.slice(self.result_placeholder, [0], [1]))
         self.value_under = tf.reduce_mean(tf.slice(self.result_placeholder, [1], [1]))
         self.value_IoU = tf.reduce_mean(tf.slice(self.result_placeholder, [2], [1]))
