@@ -29,65 +29,9 @@ def data_from_array(data_dir):
 
 def data_from_images(data_dir, batch_size, bit_depth, dim1, dim2):
     
-    rescale_factor = 1./(2**bit_depth - 1)
-    print(rescale_factor)
-
-    generator_train_x = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
-    generator_train_y = keras.preprocessing.image.ImageDataGenerator()
-    generator_validation_x = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
-    generator_validation_y = keras.preprocessing.image.ImageDataGenerator()
-    generator_test_x = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
-    generator_test_y = keras.preprocessing.image.ImageDataGenerator()
-    
-    # use any seed to sync x and y generators
-    seed = 42
-    print(data_dir + 'training/x/')
-    batch_stream_train_x = generator_train_x.flow_from_directory(data_dir + 'training/x/',
-                                                           target_size=(dim1,dim2),
-                                                           color_mode='grayscale',
-                                                           batch_size=batch_size,
-                                                           class_mode=None,
-                                                           seed=seed)
-    batch_stream_train_y = generator_train_y.flow_from_directory(data_dir + 'training/y/',
-                                                           target_size=(dim1,dim2),
-                                                           color_mode='rgb',
-                                                           batch_size=batch_size,
-                                                           class_mode=None,
-                                                           seed=seed)
-    batch_stream_validation_x = generator_validation_x.flow_from_directory(data_dir + 'validation/x/',
-                                                           target_size=(dim1,dim2),
-                                                           color_mode='grayscale',
-                                                           batch_size=batch_size,
-                                                           class_mode=None,
-                                                           seed=seed)
-    batch_stream_validation_y = generator_validation_y.flow_from_directory(data_dir + 'validation/y/',
-                                                           target_size=(dim1,dim2),
-                                                           color_mode='rgb',
-                                                           batch_size=batch_size,
-                                                           class_mode=None,
-                                                           seed=seed)
-    batch_stream_test_x = generator_test_x.flow_from_directory(data_dir + 'test/x/',
-                                                           target_size=(dim1,dim2),
-                                                           color_mode='grayscale',
-                                                           batch_size=batch_size,
-                                                           class_mode=None,
-                                                           save_to_dir=data_dir + 'test/generated/x',
-                                                           save_prefix='generated_x',
-                                                           save_format='png',
-                                                           seed=seed)
-    batch_stream_test_y = generator_test_y.flow_from_directory(data_dir + 'test/y/',
-                                                           target_size=(dim1,dim2),
-                                                           color_mode='rgb',
-                                                           batch_size=batch_size,
-                                                           class_mode=None,
-                                                           save_to_dir=data_dir + 'test/generated/y',
-                                                           save_prefix='generated_y',
-                                                           save_format='png',
-                                                           seed=seed)
-    
-    flow_train = zip(batch_stream_train_x, batch_stream_train_y)
-    flow_validation = zip(batch_stream_validation_x, batch_stream_validation_y)
-    flow_test = zip(batch_stream_test_x, batch_stream_test_y)
+    flow_train = single_data_from_images(data_dir + 'training/', batch_size, bit_depth, dim1, dim2)
+    flow_validation = single_data_from_images(data_dir + 'validation/', batch_size, bit_depth, dim1, dim2)
+    flow_test = single_data_from_images(data_dir + 'test/', batch_size, bit_depth, dim1, dim2)
     
     return [flow_train, flow_validation, flow_test]
 
@@ -113,6 +57,6 @@ def single_data_from_images(data_dir, batch_size, bit_depth, dim1, dim2):
                                                            class_mode=None,
                                                            seed=seed)
     
-    flow = zip(batch_stream_train_x, batch_stream_train_y)
+    flow = zip(stream_x, stream_y)
     
     return flow
