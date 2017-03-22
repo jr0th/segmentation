@@ -27,19 +27,23 @@ import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
+
 data_dir = "/home/jr0th/github/segmentation/data/BBBC022_10/"
 data_type = "images" # "images" or "array"
-dim1 = 256
-dim2 = 256
+
 out_dir = "../out/"
 tb_log_dir = "../logs/logs_tensorboard/"
 
-nb_epoch = 2
+nb_epoch = 10
 batch_size = 2
 
 # generator only params
-nb_batches = 1
-bit_depth = 8
+if(data_type == "images"):
+    dim1 = 256
+    dim2 = 256
+
+    nb_batches = 1
+    bit_depth = 8
 
 # build session running on GPU 1
 configuration = tf.ConfigProto()
@@ -52,7 +56,7 @@ keras.backend.set_session(session)
 
 if data_type == "array":
     
-    [training_x, training_y, validation_x, validation_y, test_x, test_y] = helper.data_provider.data_from_array(data_dir)
+    [training_x, training_y, validation_x, validation_y, _, _] = helper.data_provider.data_from_array(data_dir)
     
     # reshape y to fit network output
     training_y_vec = training_y.reshape((-1, 128 * 128, 3))
@@ -77,7 +81,10 @@ if data_type == "array":
     callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, [validation_x, validation_y], tb_log_dir)
     
 elif data_type == "images":
-    [training_gen, validation_gen, test_gen] = helper.data_provider.data_from_images(data_dir, batch_size, bit_depth, dim1, dim2)
+    
+    training_gen = helper.data_provider.single_data_from_images(data_dir + "training/", batch_size, bit_depth, dim1, dim2)
+    validation_gen = helper.data_provider.single_data_from_images(data_dir + "validation/", batch_size, bit_depth, dim1, dim2)
+
     model = helper.model_builder.get_model_3d_output(dim1, dim2)
     loss = "categorical_crossentropy"
     
@@ -108,7 +115,6 @@ if data_type == "array":
                            callbacks = callbacks,
                            verbose = 1)
     
-    
 elif data_type == "images":
     statistics = model.fit_generator(nb_epoch=nb_epoch,
                                      samples_per_epoch = nb_batches * batch_size,
@@ -117,7 +123,6 @@ elif data_type == "images":
                                      nb_val_samples=batch_size,
                                      callbacks=callbacks,
                                      verbose=1)
-    
     
 # visualize learning stats
 helper.visualize.visualize_learning_stats(statistics, out_dir, metrics)
