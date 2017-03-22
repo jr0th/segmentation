@@ -27,15 +27,16 @@ import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
-data_dir = "/home/jr0th/github/segmentation/data/BBBC022_100/"
+data_dir = "/home/jr0th/github/segmentation/data/BBBC022/"
 data_type = "images" # "images" or "array"
 out_dir = "../out/"
+tb_log_dir = "../logs/logs_tensorboard/"
 
 nb_epoch = 100
-batch_size = 3
+batch_size = 20
 
 # generator only params
-nb_batches = 3
+nb_batches = 1
 bit_depth = 8
 
 # build session running on GPU 1
@@ -48,6 +49,7 @@ session = tf.Session(config = configuration)
 keras.backend.set_session(session)
 
 if data_type == "array":
+    
     [training_x, training_y, validation_x, validation_y, test_x, test_y] = helper.data_provider.data_from_array(data_dir)
     
     # reshape y to fit network output
@@ -70,14 +72,14 @@ if data_type == "array":
     model = helper.model_builder.get_model_3d_output(dim1, dim2)
     loss = "categorical_crossentropy"
 
-    callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type = data_type, data = [validation_x, validation_y], log_dir='../logs/logs_tensorboard')
+    callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, [validation_x, validation_y], tb_log_dir)
     
 elif data_type == "images":
-    [training_generator, validation_generator, test_generator, dim1, dim2] = helper.data_provider.data_from_images(data_dir, batch_size=batch_size, bit_depth=bit_depth)
+    [training_gen, validation_gen, test_gen, dim1, dim2] = helper.data_provider.data_from_images(data_dir, batch_size, bit_depth)
     model = helper.model_builder.get_model_3d_output(dim1, dim2)
     loss = "categorical_crossentropy"
     
-    callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type = data_type, data = validation_generator, log_dir='../logs/logs_tensorboard')
+    callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type = data_type, data = validation_gen, log_dir='../logs/logs_tensorboard')
     
 
 # TODO include precision and recall
@@ -90,7 +92,7 @@ model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 # save model after each epoch
 callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="../checkpoints/checkpoint.hdf5", save_weights_only=True, save_best_only=True)
 callback_csv = keras.callbacks.CSVLogger(filename="../logs/log.csv")
-callback_tensorboard = keras.callbacks.TensorBoard(log_dir='../logs/logs_tensorboard', histogram_freq=1)
+callback_tensorboard = keras.callbacks.TensorBoard(log_dir=tb_log_dir, histogram_freq=1)
 
 callbacks=[callback_model_checkpoint, callback_csv, callback_splits_and_merges]
 
@@ -104,22 +106,17 @@ if data_type == "array":
                            callbacks = callbacks,
                            verbose = 1)
     
-    # print test results
-    res = model.evaluate(test_x, test_y)
     
 elif data_type == "images":
     statistics = model.fit_generator(nb_epoch=nb_epoch,
                                      samples_per_epoch = nb_batches * batch_size,
-                                     generator = training_generator,
-                                     validation_data = validation_generator,
+                                     generator = training_gen,
+                                     validation_data = validation_gen,
                                      nb_val_samples=batch_size,
                                      callbacks=callbacks,
                                      verbose=1)
     
-    # print test results
-    res = model.evaluate_generator(generator = test_generator, val_samples = batch_size)
     
 # visualize learning stats
 helper.visualize.visualize_learning_stats(statistics, out_dir, metrics)
-print(res)
 print('Done! :)')
