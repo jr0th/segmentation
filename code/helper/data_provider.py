@@ -27,10 +27,7 @@ def data_from_array(data_dir):
     
     return [training_x, training_y, validation_x, validation_y, test_x, test_y]
 
-def data_from_images(data_dir, batch_size, bit_depth):
-
-    dim1 = 256
-    dim2 = 256
+def data_from_images(data_dir, batch_size, bit_depth, dim1, dim2):
     
     rescale_factor = 1./(2**bit_depth - 1)
     print(rescale_factor)
@@ -42,6 +39,7 @@ def data_from_images(data_dir, batch_size, bit_depth):
     generator_test_x = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
     generator_test_y = keras.preprocessing.image.ImageDataGenerator()
     
+    # use any seed to sync x and y generators
     seed = 42
     print(data_dir + 'training/x/')
     batch_stream_train_x = generator_train_x.flow_from_directory(data_dir + 'training/x/',
@@ -91,4 +89,30 @@ def data_from_images(data_dir, batch_size, bit_depth):
     flow_validation = zip(batch_stream_validation_x, batch_stream_validation_y)
     flow_test = zip(batch_stream_test_x, batch_stream_test_y)
     
-    return [flow_train, flow_validation, flow_test, dim1, dim2]
+    return [flow_train, flow_validation, flow_test]
+
+def single_data_from_images(data_dir, batch_size, bit_depth, dim1, dim2):
+
+    rescale_factor = 1./(2**bit_depth - 1)
+
+    gen_x = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
+    gen_y = keras.preprocessing.image.ImageDataGenerator()
+    
+    seed = 42
+
+    stream_x = gen_x.flow_from_directory(data_dir + 'x/',
+                                                           target_size=(dim1,dim2),
+                                                           color_mode='grayscale',
+                                                           batch_size=batch_size,
+                                                           class_mode=None,
+                                                           seed=seed)
+    stream_y = gen_y.flow_from_directory(data_dir + 'y/',
+                                                           target_size=(dim1,dim2),
+                                                           color_mode='rgb',
+                                                           batch_size=batch_size,
+                                                           class_mode=None,
+                                                           seed=seed)
+    
+    flow = zip(batch_stream_train_x, batch_stream_train_y)
+    
+    return flow

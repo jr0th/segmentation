@@ -27,13 +27,15 @@ import matplotlib.pyplot as plt
 
 # constants
 const_lr = 1e-4
-data_dir = "/home/jr0th/github/segmentation/data/BBBC022/"
+data_dir = "/home/jr0th/github/segmentation/data/BBBC022_10/"
 data_type = "images" # "images" or "array"
+dim1 = 256
+dim2 = 256
 out_dir = "../out/"
 tb_log_dir = "../logs/logs_tensorboard/"
 
-nb_epoch = 100
-batch_size = 20
+nb_epoch = 2
+batch_size = 2
 
 # generator only params
 nb_batches = 1
@@ -75,7 +77,7 @@ if data_type == "array":
     callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, [validation_x, validation_y], tb_log_dir)
     
 elif data_type == "images":
-    [training_gen, validation_gen, test_gen, dim1, dim2] = helper.data_provider.data_from_images(data_dir, batch_size, bit_depth)
+    [training_gen, validation_gen, test_gen] = helper.data_provider.data_from_images(data_dir, batch_size, bit_depth, dim1, dim2)
     model = helper.model_builder.get_model_3d_output(dim1, dim2)
     loss = "categorical_crossentropy"
     
