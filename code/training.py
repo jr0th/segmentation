@@ -34,8 +34,12 @@ data_type = "images" # "images" or "array"
 out_dir = "../out/"
 tb_log_dir = "../logs/logs_tensorboard/"
 
-nb_epoch = 10
+nb_epoch = 2
 batch_size = 2
+
+nb_val_samples = 100
+val_batch_size = 10
+val_dir = "/home/jr0th/github/segmentation/data/BBBC022_val_debug/"
 
 # generator only params
 if(data_type == "images"):
@@ -48,7 +52,7 @@ if(data_type == "images"):
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "2"
+configuration.gpu_options.visible_device_list = "0"
 session = tf.Session(config = configuration)
 
 # apply session
@@ -60,15 +64,12 @@ if data_type == "array":
     
     # reshape y to fit network output
     training_y_vec = training_y.reshape((-1, 128 * 128, 3))
-    test_y_vec = test_y.reshape((-1,128 * 128, 3))
     validation_y_vec = validation_y.reshape((-1,128 * 128, 3))
 
     print(training_y_vec.shape)
-    print(test_y_vec.shape)
     print(validation_y_vec.shape)
 
     print(np.unique(training_y_vec))
-    print(np.unique(test_y_vec))
     print(np.unique(validation_y_vec))
 
     dim1 = training_x.shape[1]
@@ -82,19 +83,17 @@ if data_type == "array":
     
 elif data_type == "images":
     
-    training_gen = helper.data_provider.single_data_from_images(data_dir + "training/", batch_size, bit_depth, dim1, dim2)
-    validation_gen = helper.data_provider.single_data_from_images(data_dir + "validation/", batch_size, bit_depth, dim1, dim2)
+    train_gen = helper.data_provider.single_data_from_images(data_dir + "training/", batch_size, bit_depth, dim1, dim2)
+    val_gen = helper.data_provider.single_data_from_images(val_dir, val_batch_size, bit_depth, dim1, dim2)
 
     model = helper.model_builder.get_model_3d_output(dim1, dim2)
     loss = "categorical_crossentropy"
     
-    callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type = data_type, data = validation_gen, log_dir='../logs/logs_tensorboard')
+    callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, val_gen, log_dir='../logs/logs_tensorboard')
     
 
-# TODO include precision and recall
 optimizer = keras.optimizers.RMSprop(lr = const_lr)
 metrics = [keras.metrics.categorical_accuracy, helper.metrics.recall, helper.metrics.precision]
-#, "precision", "recall"
 model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 
 # CALLBACKS
@@ -118,9 +117,9 @@ if data_type == "array":
 elif data_type == "images":
     statistics = model.fit_generator(nb_epoch=nb_epoch,
                                      samples_per_epoch = nb_batches * batch_size,
-                                     generator = training_gen,
-                                     validation_data = validation_gen,
-                                     nb_val_samples=batch_size,
+                                     generator = train_gen,
+                                     validation_data = val_gen,
+                                     nb_val_samples=nb_val_samples,
                                      callbacks=callbacks,
                                      verbose=1)
     
