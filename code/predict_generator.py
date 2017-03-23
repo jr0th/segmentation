@@ -13,8 +13,11 @@ weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint.hdf5'
 batch_size = 10
 bit_depth = 8
 
+dim1 = 256
+dim2 = 256
+
 # get generator for test data
-[_, _, test_generator, dim1, dim2] = helper.data_provider.data_from_images(data_dir, batch_size=batch_size, bit_depth=bit_depth)
+[_, _, test_generator] = helper.data_provider.data_from_images(data_dir, batch_size, bit_depth, dim1, dim2)
 
 # build model and laod weights
 model = helper.model_builder.get_model_3d_output(dim1, dim2)
