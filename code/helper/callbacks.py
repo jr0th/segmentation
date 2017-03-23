@@ -6,6 +6,8 @@ import tensorflow as tf
 import pandas as pd
 import numpy as np
 
+debug = False
+
 boundary_boost_factor = 100
 tag_over = 'val_overdetection'
 tag_under = 'val_underdetection'
@@ -13,10 +15,10 @@ tag_IoU = 'val_mean_IoU'
 
 class SplitsAndMergesLogger(keras.callbacks.TensorBoard):
     
-    def __init__(self, data_type, data, log_dir='./logs', histogram_freq=0, write_graph=True, write_images=False):
+    def __init__(self, data_type, data, gen_calls = 0, log_dir='./logs', histogram_freq=0, write_graph=True, write_images=False):
         super().__init__(log_dir, histogram_freq, write_graph, write_images)
         self.data_type = data_type
-        
+        self.gen_calls = gen_calls
         # if data_type == "images" expect generator, if "array" expect [x, y] numpy arrays.
         self.data = data
 
@@ -34,25 +36,12 @@ class SplitsAndMergesLogger(keras.callbacks.TensorBoard):
         self.summary_under = tf.summary.scalar(tag_under, self.value_under)
         self.summary_IoU = tf.summary.scalar(tag_IoU, self.value_IoU)
         
+    def on_batch_end(self, batch, logs):
+        super().on_batch_end(batch, logs)
         
-    def on_epoch_end(self, epoch, logs):
-        super().on_epoch_end(epoch, logs)
         
-        if self.data_type == "images":
-            # predict stuff from images – use generator
-            
-            generated = next(self.data)
-            x_batch = generated[0]
-            y_batch = generated[1]
-            
-            y_model_probmap_batch = self.model.predict_on_batch(x_batch)
-            
-        elif self.data_type == "array":
-            # predict probmap from nummpy arrays
-            
-            x_batch = self.data[0]
-            y_batch = self.data[1]
-            
+    def get_error_for_batch(self, x_batch, y_batch):
+
         # get probmaps from model
         y_model_probmap_batch = self.model.predict_on_batch(x_batch)
 
@@ -61,7 +50,7 @@ class SplitsAndMergesLogger(keras.callbacks.TensorBoard):
         y_gt_pred_batch = helper.metrics.probmap_to_pred(y_batch, boundary_boost_factor)
 
         # buffer for all results
-        results = np.empty(shape = (0, 3), dtype = np.float16)
+        results = np.empty(shape = (0, 3), dtype = np.float16)        
         
         # loop over all samples in the batch
         for index in range(len(y_model_pred_batch)):
@@ -73,9 +62,40 @@ class SplitsAndMergesLogger(keras.callbacks.TensorBoard):
             # calculate and save error
             result = helper.metrics.splits_and_merges(y_model_pred, y_gt_pred)
             results = np.vstack((results, result))
+        
+        return results
+        
+        
+    def on_epoch_end(self, epoch, logs):
+        super().on_epoch_end(epoch, logs)
+        
+        if self.data_type == "images":
+            # predict stuff from images – use generator
+            
+            # buffer for all results
+            results = np.empty(shape = (0, 3), dtype = np.float16)        
+            
+            # loop over necessary calls to generator (otherwise batches don't fit in memory)
+            for index in range(self.gen_calls):
+                
+                generated = next(self.data)
+                x_batch = generated[0]
+                y_batch = generated[1]
+                
+                result = self.get_error_for_batch(x_batch, y_batch)
+                results = np.vstack((results, result))
+            
+        elif self.data_type == "array":
+            # predict probmap from nummpy arrays
+            
+            x_batch = self.data[0]
+            y_batch = self.data[1]
+            
+            results = get_error_for_batch(x_batch, y_batch)
 
         # DEBUG print results. Can be removed later, but it is a nice thing to see during the training.
-        print(results)
+        if debug:
+            print(results)
         
         # get all the metrics staged in Tensors.
         listOfSummaries = [self.summary_over, self.summary_under, self.summary_IoU]

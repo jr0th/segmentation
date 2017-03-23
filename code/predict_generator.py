@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 out_label = 'pred_generator'
 out_dir = '/home/jr0th/github/segmentation/out/'
-data_dir = '/home/jr0th/github/segmentation/data/BBBC022_100/'
+data_dir = '/home/jr0th/github/segmentation/data/BBBC022_10/'
 weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint.hdf5'
 batch_size = 10
 bit_depth = 8

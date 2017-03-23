@@ -28,18 +28,20 @@ import matplotlib.pyplot as plt
 # constants
 const_lr = 1e-4
 
-data_dir = "/home/jr0th/github/segmentation/data/BBBC022_10/"
-data_type = "images" # "images" or "array"
-
 out_dir = "../out/"
 tb_log_dir = "../logs/logs_tensorboard/"
 
-nb_epoch = 2
-batch_size = 2
+data_dir = "/home/jr0th/github/segmentation/data/BBBC022_10/"
+data_type = "images" # "images" or "array"
+nb_epoch = 100
+batch_size = 10
 
-nb_val_samples = 100
+# make sure these number for to the validation set
+val_dir = "/home/jr0th/github/segmentation/data/BBBC022_validation/"
+val_steps = 10
 val_batch_size = 10
-val_dir = "/home/jr0th/github/segmentation/data/BBBC022_val_debug/"
+
+
 
 # generator only params
 if(data_type == "images"):
@@ -89,7 +91,7 @@ elif data_type == "images":
     model = helper.model_builder.get_model_3d_output(dim1, dim2)
     loss = "categorical_crossentropy"
     
-    callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, val_gen, log_dir='../logs/logs_tensorboard')
+    callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, val_gen, gen_calls = val_steps , log_dir='../logs/logs_tensorboard')
     
 
 optimizer = keras.optimizers.RMSprop(lr = const_lr)
@@ -115,11 +117,12 @@ if data_type == "array":
                            verbose = 1)
     
 elif data_type == "images":
-    statistics = model.fit_generator(nb_epoch=nb_epoch,
-                                     samples_per_epoch = nb_batches * batch_size,
-                                     generator = train_gen,
-                                     validation_data = val_gen,
-                                     nb_val_samples=nb_val_samples,
+    statistics = model.fit_generator(epochs=nb_epoch,
+                                     steps_per_epoch=nb_batches,
+                                     generator=train_gen,
+                                     validation_data=val_gen,
+                                     validation_steps=val_steps,
+                                     max_q_size=1,
                                      callbacks=callbacks,
                                      verbose=1)
     
