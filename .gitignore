@@ -5,9 +5,9 @@ checkpoints/
 out/
 results/
 
-experiments/GT_labels/
-experiments/DL
-experiments/CP_images
+experiments/BBBC022_hand/GT_labels
+experiments/BBBC022_hand/DL
+experiments/BBBC022_hand/CP_images
 
 # PYTHON CLUTTER
 __pycache__/
