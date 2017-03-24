@@ -5,7 +5,7 @@ checkpoints/
 out/
 results/
 
-experiments/GT_labels
+experiments/GT_labels/
 experiments/DL
 experiments/CP_images
 
