@@ -43,11 +43,7 @@ def pred_to_label(pred, cell_min_size=300, cell_label=1):
     return label
 
 
-def splits_and_merges(y_model_pred, y_gt_pred):
-    
-    # get segmentations
-    label_gt = pred_to_label(y_gt_pred, cell_min_size=2)
-    label_model = pred_to_label(y_model_pred, cell_min_size=2)
+def compare_two_labels(label_model, label_gt):
     
     # get number of detected nuclei
     nb_nuclei_gt = np.max(label_gt)
@@ -63,7 +59,7 @@ def splits_and_merges(y_model_pred, y_gt_pred):
     
     # catch the case of empty picture in gt
     if nb_nuclei_gt == 0:
-        return [nb_nuclei_gt, 0, 0]
+        return [nb_nuclei_model, 0, 0]
     
     # build IoU matrix
     IoUs = np.full((nb_nuclei_gt, nb_nuclei_model), -1, dtype = np.float32)
@@ -93,6 +89,17 @@ def splits_and_merges(y_model_pred, y_gt_pred):
     mean_IoU = np.mean(np.sum(detection_rate, axis = 1))
     
     result = [nb_overdetection, nb_underdetection, mean_IoU]
+    return result
+
+def splits_and_merges(y_model_pred, y_gt_pred):
+    
+    # get segmentations
+    label_gt = pred_to_label(y_gt_pred, cell_min_size=2)
+    label_model = pred_to_label(y_model_pred, cell_min_size=2)
+    
+    # compare labels
+    result = compare_two_labels(model_label, label_gt):
+        
     return result
 
 # test
