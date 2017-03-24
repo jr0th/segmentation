@@ -98,7 +98,7 @@ def splits_and_merges(y_model_pred, y_gt_pred):
     label_model = pred_to_label(y_model_pred, cell_min_size=2)
     
     # compare labels
-    result = compare_two_labels(model_label, label_gt):
+    result = compare_two_labels(model_label, label_gt)
         
     return result
 
