@@ -67,9 +67,15 @@ def compare_two_labels(label_model, label_gt):
     # calculate IoU for each nucleus index_gt in GT and nucleus index_pred in prediction    
     # TODO improve runtime of this algorithm
     for index_gt in range(1,nb_nuclei_gt+1):
+
         nucleus_gt = label_gt == index_gt
         number_gt = np.sum(nucleus_gt)
+
         for index_model in range(1,nb_nuclei_model+1):
+            
+            if debug:
+                print(index_gt, "/", index_model)
+            
             nucleus_model = label_model == index_model 
             number_model = np.sum(nucleus_model)
             
@@ -98,7 +104,7 @@ def splits_and_merges(y_model_pred, y_gt_pred):
     label_model = pred_to_label(y_model_pred, cell_min_size=2)
     
     # compare labels
-    result = compare_two_labels(model_label, label_gt)
+    result = compare_two_labels(label_model, label_gt)
         
     return result
 

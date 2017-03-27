@@ -25,15 +25,20 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
+import sys
+
 # constants
 const_lr = 1e-4
 
 out_dir = "../out/"
 tb_log_dir = "../logs/logs_tensorboard/"
 
-data_dir = "/home/jr0th/github/segmentation/data/BBBC022_10/"
+OPTION_DATA = sys.argv[1]
+data_dir = "/home/jr0th/github/segmentation/data/" + OPTION_DATA + "/"
+print(data_dir)
+# data_dir = '/home/jr0th/github/segmentation/data/BBBC022/'
 data_type = "images" # "images" or "array"
-nb_epoch = 100
+nb_epoch = 500
 batch_size = 10
 
 # make sure these number for to the validation set
@@ -54,7 +59,7 @@ if(data_type == "images"):
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "0"
+configuration.gpu_options.visible_device_list = "2"
 session = tf.Session(config = configuration)
 
 # apply session

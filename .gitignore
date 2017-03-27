@@ -6,8 +6,10 @@ out/
 results/
 
 experiments/BBBC022_hand/GT_labels
-experiments/BBBC022_hand/DL
-experiments/BBBC022_hand/CP_images
+experiments/BBBC022_hand/DL_labels
+experiments/BBBC022_hand/CP_labels
+
+experiments/BBBC022_hand/DL_probmap
 
 # PYTHON CLUTTER
 __pycache__/
