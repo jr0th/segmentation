@@ -37,8 +37,8 @@ OPTION_DATA = sys.argv[1]
 data_dir = "/home/jr0th/github/segmentation/data/" + OPTION_DATA + "/"
 print(data_dir)
 # data_dir = '/home/jr0th/github/segmentation/data/BBBC022/'
-data_type = "images" # "images" or "array"
-nb_epoch = 500
+data_type = "array" # "images" or "array"
+nb_epoch = 5
 batch_size = 10
 
 # make sure these number for to the validation set
@@ -53,7 +53,7 @@ if(data_type == "images"):
     dim1 = 256
     dim2 = 256
 
-    nb_batches = 1
+    nb_batches = 100
     bit_depth = 8
 
 # build session running on GPU 1
@@ -81,10 +81,6 @@ if data_type == "array":
 
     dim1 = training_x.shape[1]
     dim2 = training_x.shape[2]
-    
-    # build model
-    model = helper.model_builder.get_model_3d_output(dim1, dim2)
-    loss = "categorical_crossentropy"
 
     callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, [validation_x, validation_y], tb_log_dir)
     
@@ -93,12 +89,12 @@ elif data_type == "images":
     train_gen = helper.data_provider.single_data_from_images(data_dir + "training/", batch_size, bit_depth, dim1, dim2)
     val_gen = helper.data_provider.single_data_from_images(val_dir, val_batch_size, bit_depth, dim1, dim2)
 
-    model = helper.model_builder.get_model_3d_output(dim1, dim2)
-    loss = "categorical_crossentropy"
-    
     callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, val_gen, gen_calls = val_steps , log_dir='../logs/logs_tensorboard')
     
-
+# build model
+model = helper.model_builder.get_model_3_class(dim1, dim2)
+model.summary()
+loss = "categorical_crossentropy"
 optimizer = keras.optimizers.RMSprop(lr = const_lr)
 metrics = [keras.metrics.categorical_accuracy, helper.metrics.recall, helper.metrics.precision]
 model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
