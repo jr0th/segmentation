@@ -8,6 +8,9 @@ results/
 experiments/BBBC022_hand/GT_labels
 experiments/BBBC022_hand/DL_labels
 experiments/BBBC022_hand/CP_labels
+experiments/BBBC022_hand/CP_labels_tiff
+experiments/BBBC022_hand/err_img_CP
+experiments/BBBC022_hand/err_img_DL
 
 experiments/BBBC022_hand/IoU_DL
 experiments/BBBC022_hand/IoU_CP
