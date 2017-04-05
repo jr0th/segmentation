@@ -91,7 +91,7 @@ class SplitsAndMergesLogger(keras.callbacks.TensorBoard):
             x_batch = self.data[0]
             y_batch = self.data[1]
             
-            results = get_error_for_batch(x_batch, y_batch)
+            results = self.get_error_for_batch(x_batch, y_batch)
 
         # DEBUG print results. Can be removed later, but it is a nice thing to see during the training.
         if debug:
