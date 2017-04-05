@@ -43,7 +43,7 @@ def pred_to_label(pred, cell_min_size=300, cell_label=1):
     return label
 
 
-def compare_two_labels(label_model, label_gt):
+def compare_two_labels(label_model, label_gt, return_IoU_matrix):
     
     # get number of detected nuclei
     nb_nuclei_gt = np.max(label_gt)
@@ -51,15 +51,25 @@ def compare_two_labels(label_model, label_gt):
     
     # catch the case of an empty picture in model and gt
     if nb_nuclei_gt == 0 and nb_nuclei_model == 0:
-        return [0, 0, 1]
+        if(return_IoU_matrix):
+            return [0, 0, 1, np.empty(0)]     
+        else:
+            return [0, 0, 1]
+
     
     # catch the case of empty picture in model
     if nb_nuclei_model == 0:
-        return [0, nb_nuclei_gt, 0]
+        if(return_IoU_matrix):
+            return [0, nb_nuclei_gt, 0, np.empty(0)]     
+        else:
+            return [0, nb_nuclei_gt, 0]
     
     # catch the case of empty picture in gt
     if nb_nuclei_gt == 0:
-        return [nb_nuclei_model, 0, 0]
+        if(return_IoU_matrix):
+            return [nb_nuclei_model, 0, 0, np.empty(0)]     
+        else:
+            return [nb_nuclei_model, 0, 0]
     
     # build IoU matrix
     IoUs = np.full((nb_nuclei_gt, nb_nuclei_model), -1, dtype = np.float32)
@@ -94,7 +104,10 @@ def compare_two_labels(label_model, label_gt):
     
     mean_IoU = np.mean(np.sum(detection_rate, axis = 1))
     
-    result = [nb_overdetection, nb_underdetection, mean_IoU]
+    if(return_IoU_matrix):
+        result = [nb_overdetection, nb_underdetection, mean_IoU, IoUs]
+    else:
+        result = [nb_overdetection, nb_underdetection, mean_IoU]
     return result
 
 def splits_and_merges(y_model_pred, y_gt_pred):
@@ -104,7 +117,7 @@ def splits_and_merges(y_model_pred, y_gt_pred):
     label_model = pred_to_label(y_model_pred, cell_min_size=2)
     
     # compare labels
-    result = compare_two_labels(label_model, label_gt)
+    result = compare_two_labels(label_model, label_gt, False)
         
     return result
 
