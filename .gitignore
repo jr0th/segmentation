@@ -9,6 +9,9 @@ experiments/BBBC022_hand/GT_labels
 experiments/BBBC022_hand/DL_labels
 experiments/BBBC022_hand/CP_labels
 
+experiments/BBBC022_hand/IoU_DL
+experiments/BBBC022_hand/IoU_CP
+
 experiments/BBBC022_hand/DL_probmap
 
 # PYTHON CLUTTER
