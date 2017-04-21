@@ -1,7 +1,9 @@
 import numpy as np
 import keras.preprocessing.image
+import helper.external.SegDataGenerator
 
 def data_from_array(data_dir):
+    
     # load  x
     training_x = np.load(data_dir+"training/x.npy")
     test_x = np.load(data_dir+"test/x.npy")
@@ -60,3 +62,8 @@ def single_data_from_images(data_dir, batch_size, bit_depth, dim1, dim2):
     flow = zip(stream_x, stream_y)
     
     return flow
+
+def data_from_images_segmentation(file_path, data_dir, label_dir, classes, dim1, dim2):
+    generator = helper.external.SegDataGenerator.SegDataGenerator()
+    iterator = generator.flow_from_directory(file_path, data_dir, '.png', label_dir, '.png', classes, target_size=(dim1, dim2))
+    return iterator 
