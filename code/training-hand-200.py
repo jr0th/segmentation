@@ -37,7 +37,7 @@ val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_
 
 data_type = "images" # "images" or "array"
 
-nb_epoch = 50
+nb_epoch = 1000
 batch_size = 10
 nb_batches = int(400 / batch_size) # 100 images, 400 patches
 
@@ -53,8 +53,6 @@ val_steps = int(200 / batch_size) # 50 images, 200 patches
 
 dim1 = 256
 dim2 = 256
-
-
 
 # build session running on GPU 1
 configuration = tf.ConfigProto()

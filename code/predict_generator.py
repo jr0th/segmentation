@@ -23,11 +23,13 @@ dim1 = 256
 dim2 = 256
 
 # get generator for test data
-[_, _, test_generator] = helper.data_provider.data_from_images(
-    data_dir,
+test_generator = helper.data_provider.single_data_from_images(
+    data_dir + 'x/',
+    data_dir + 'y/',
     batch_size,
     bit_depth,
-    dim1,dim2
+    dim1, 
+    dim2
 )
 
 # build model and laod weights

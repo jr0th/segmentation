@@ -40,9 +40,15 @@ def data_from_images(data_dir, batch_size, bit_depth, dim1, dim2):
 def single_data_from_images(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):
 
     rescale_factor = 1./(2**bit_depth - 1)
+    rescale_labels = True
+    
+    if(rescale_labels):
+        rescale_factor_labels = rescale_factor
+    else:
+        rescale_factor_labels = 1
 
     gen_x = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
-    gen_y = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
+    gen_y = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor_labels)
     
     seed = 42
 

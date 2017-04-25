@@ -38,11 +38,11 @@ data_dir = "/home/jr0th/github/segmentation/data/" + OPTION_DATA + "/"
 print(data_dir)
 # data_dir = '/home/jr0th/github/segmentation/data/BBBC022/'
 data_type = "images" # "images" or "array"
-nb_epoch = 5
+nb_epoch = 2
 batch_size = 10
 
 # make sure these number for to the validation set
-val_dir = "/home/jr0th/github/segmentation/data/BBBC022_validation_200/"
+val_dir = "/home/jr0th/github/segmentation/data/BBBC022_validation_allen/"
 val_steps = 10
 val_batch_size = 10
 
@@ -52,13 +52,13 @@ if(data_type == "images"):
     dim1 = 256
     dim2 = 256
 
-    nb_batches = 100
+    nb_batches = 3
     bit_depth = 8
 
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "2"
+configuration.gpu_options.visible_device_list = "0"
 session = tf.Session(config = configuration)
 
 # apply session
