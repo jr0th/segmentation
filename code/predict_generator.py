@@ -23,10 +23,15 @@ dim1 = 256
 dim2 = 256
 
 # get generator for test data
-[_, _, test_generator] = helper.data_provider.data_from_images(data_dir, batch_size, bit_depth, dim1, dim2)
+[_, _, test_generator] = helper.data_provider.data_from_images(
+    data_dir,
+    batch_size,
+    bit_depth,
+    dim1,dim2
+)
 
 # build model and laod weights
-model = helper.model_builder.get_model_3d_output(dim1, dim2)
+model = helper.model_builder.get_model_3_class(dim1, dim2)
 model.load_weights(weights_path)
 
 # get one batch of data from the generator

@@ -29,39 +29,49 @@ const_lr = 1e-4
 out_dir = "../out/"
 tb_log_dir = "../logs/logs_tensorboard/"
 
-labels_dir = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/raw_annotations'
-images_dir = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/raw_images'
-file_path = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/all_files_wo_ext.txt'
-data_type = "array" # "images" or "array"
-nb_epoch = 5
-batch_size = 10
+train_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/x'
+train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_label_binary'
 
-# make sure these number for to the validation set
-val_dir = "/home/jr0th/github/segmentation/data/BBBC022_validation/"
-val_steps = 10
-val_batch_size = 10
+val_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/x'
+val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_label_binary'
+
+data_type = "images" # "images" or "array"
+
+nb_epoch = 50
+batch_size = 10
+nb_batches = int(400 / batch_size) # 100 images, 400 patches
+
+# images and masks are in 8 bit
+bit_depth = 8
+
+# SEGMENTATION DATA GENERATOR
+file_path = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/all_files_wo_ext.txt'
+classes = 3
+
+# make sure these matches number for to the validation set
+val_steps = int(200 / batch_size) # 50 images, 200 patches
 
 dim1 = 256
 dim2 = 256
 
-nb_batches = 100
-bit_depth = 8
+
 
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "2"
+configuration.gpu_options.visible_device_list = "1"
 session = tf.Session(config = configuration)
 
 # apply session
 keras.backend.set_session(session)
     
 # get training generator
-classes = 3
-train_gen = helper.data_provider.data_from_images_segmentation(file_path, images_dir, labels_dir, classes, dim1, dim2)
-val_gen = helper.data_provider.single_data_from_images(val_dir, val_batch_size, bit_depth, dim1, dim2)
 
-callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, val_gen, gen_calls = val_steps , log_dir='../logs/logs_tensorboard')
+#train_gen = helper.data_provider.data_from_images_segmentation(file_path, images_dir, labels_dir, classes, batch_size, dim1, dim2)
+train_gen = helper.data_provider.single_data_from_images(train_dir_x, train_dir_y, batch_size, bit_depth, dim1, dim2)
+val_gen = helper.data_provider.single_data_from_images(val_dir_x, val_dir_y, batch_size, bit_depth, dim1, dim2)
+
+callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, val_gen, gen_calls = val_steps, log_dir='../logs/logs_tensorboard')
     
 # build model
 model = helper.model_builder.get_model_3_class(dim1, dim2)
@@ -79,14 +89,16 @@ callback_tensorboard = keras.callbacks.TensorBoard(log_dir=tb_log_dir, histogram
 
 callbacks=[callback_model_checkpoint, callback_csv, callback_splits_and_merges]
 
-statistics = model.fit_generator(epochs=nb_epoch,
-                                     steps_per_epoch=nb_batches,
-                                     generator=train_gen,
-                                     validation_data=val_gen,
-                                     validation_steps=val_steps,
-                                     max_q_size=1,
-                                     callbacks=callbacks,
-                                     verbose=1)
+statistics = model.fit_generator(
+    epochs=nb_epoch,
+    steps_per_epoch=nb_batches,
+    generator=train_gen,
+    validation_data=val_gen,
+    validation_steps=val_steps,
+    max_q_size=1,
+    callbacks=callbacks,
+    verbose=1
+)
     
 # visualize learning stats
 helper.visualize.visualize_learning_stats(statistics, out_dir, metrics)

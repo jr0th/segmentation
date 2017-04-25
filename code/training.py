@@ -37,15 +37,14 @@ OPTION_DATA = sys.argv[1]
 data_dir = "/home/jr0th/github/segmentation/data/" + OPTION_DATA + "/"
 print(data_dir)
 # data_dir = '/home/jr0th/github/segmentation/data/BBBC022/'
-data_type = "array" # "images" or "array"
+data_type = "images" # "images" or "array"
 nb_epoch = 5
 batch_size = 10
 
 # make sure these number for to the validation set
-val_dir = "/home/jr0th/github/segmentation/data/BBBC022_validation/"
+val_dir = "/home/jr0th/github/segmentation/data/BBBC022_validation_200/"
 val_steps = 10
 val_batch_size = 10
-
 
 
 # generator only params
@@ -86,8 +85,8 @@ if data_type == "array":
     
 elif data_type == "images":
     
-    train_gen = helper.data_provider.single_data_from_images(data_dir + "training/", batch_size, bit_depth, dim1, dim2)
-    val_gen = helper.data_provider.single_data_from_images(val_dir, val_batch_size, bit_depth, dim1, dim2)
+    train_gen = helper.data_provider.single_data_from_images(data_dir + "training/x", data_dir + "training/y", batch_size, bit_depth, dim1, dim2)
+    val_gen = helper.data_provider.single_data_from_images(val_dir + 'x/', val_dir + 'y/', val_batch_size, bit_depth, dim1, dim2)
 
     callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, val_gen, gen_calls = val_steps , log_dir='../logs/logs_tensorboard')
     

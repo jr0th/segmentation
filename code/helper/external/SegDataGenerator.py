@@ -113,7 +113,7 @@ class SegDirectoryIterator(Iterator):
                              '; expected "rgb" or "grayscale".')
         self.color_mode = color_mode
         self.data_format = data_format
-        self.nb_label_ch = 1
+        self.nb_label_ch = 3 # JR 1
         self.loss_shape = loss_shape
 
         if (self.label_suffix == '.npy') or (self.label_suffix == 'npy'):
@@ -268,7 +268,9 @@ class SegDirectoryIterator(Iterator):
                 label.save(os.path.join(self.save_to_dir,
                                         'label_' + fname + '.png'))
         # return
-        batch_x = preprocess_input(batch_x)
+        # JR batch_x = preprocess_input(batch_x)
+        print(batch_x.shape, batch_y.shape)
+        np.save('./label_data.npy', batch_y)
         if self.class_mode == 'sparse':
             return batch_x, batch_y
         else:

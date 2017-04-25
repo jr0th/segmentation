@@ -31,39 +31,52 @@ def data_from_array(data_dir):
 
 def data_from_images(data_dir, batch_size, bit_depth, dim1, dim2):
     
-    flow_train = single_data_from_images(data_dir + 'training/', batch_size, bit_depth, dim1, dim2)
-    flow_validation = single_data_from_images(data_dir + 'validation/', batch_size, bit_depth, dim1, dim2)
-    flow_test = single_data_from_images(data_dir + 'test/', batch_size, bit_depth, dim1, dim2)
+    flow_train = single_data_from_images(data_dir + 'training/x/', data_dir + 'training/y/', batch_size, bit_depth, dim1, dim2)
+    flow_validation = single_data_from_images(data_dir + 'validation/x', data_dir + 'validation/y', batch_size, bit_depth, dim1, dim2)
+    flow_test = single_data_from_images(data_dir + 'test/x', data_dir + 'test/y', batch_size, bit_depth, dim1, dim2)
     
     return [flow_train, flow_validation, flow_test]
 
-def single_data_from_images(data_dir, batch_size, bit_depth, dim1, dim2):
+def single_data_from_images(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):
 
     rescale_factor = 1./(2**bit_depth - 1)
 
     gen_x = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
-    gen_y = keras.preprocessing.image.ImageDataGenerator()
+    gen_y = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
     
     seed = 42
 
-    stream_x = gen_x.flow_from_directory(data_dir + 'x/',
-                                                           target_size=(dim1,dim2),
-                                                           color_mode='grayscale',
-                                                           batch_size=batch_size,
-                                                           class_mode=None,
-                                                           seed=seed)
-    stream_y = gen_y.flow_from_directory(data_dir + 'y/',
-                                                           target_size=(dim1,dim2),
-                                                           color_mode='rgb',
-                                                           batch_size=batch_size,
-                                                           class_mode=None,
-                                                           seed=seed)
+    stream_x = gen_x.flow_from_directory(
+        x_dir,
+        target_size=(dim1,dim2),
+        color_mode='grayscale',
+        batch_size=batch_size,
+        class_mode=None,
+        seed=seed
+    )
+    stream_y = gen_y.flow_from_directory(
+        y_dir,
+        target_size=(dim1,dim2),
+        color_mode='rgb',
+        batch_size=batch_size,
+        class_mode=None,
+        seed=seed
+    )
     
     flow = zip(stream_x, stream_y)
     
     return flow
 
-def data_from_images_segmentation(file_path, data_dir, label_dir, classes, dim1, dim2):
+def data_from_images_segmentation(file_path, data_dir, label_dir, classes, batch_size, dim1, dim2):
     generator = helper.external.SegDataGenerator.SegDataGenerator()
-    iterator = generator.flow_from_directory(file_path, data_dir, '.png', label_dir, '.png', classes, target_size=(dim1, dim2))
+    iterator = generator.flow_from_directory(
+        file_path,
+        data_dir, '.png', 
+        label_dir, '.png', 
+        classes, 
+        target_size=(dim1, dim2), 
+        color_mode='grayscale',
+        batch_size=batch_size,
+        save_to_dir='./temp/'
+    )
     return iterator 
