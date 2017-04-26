@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 
 import sys
 
-OPTION_DATA = sys.argv[1]
-data_dir = "/home/jr0th/github/segmentation/data/" + OPTION_DATA + "/"
-print(data_dir)
+data_dir_x = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/x/"
+data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/y_label_binary/"
+
 
 out_label = 'pred_generator'
 out_dir = '/home/jr0th/github/segmentation/out/'
@@ -24,8 +24,8 @@ dim2 = 256
 
 # get generator for test data
 test_generator = helper.data_provider.single_data_from_images(
-    data_dir + 'x/',
-    data_dir + 'y/',
+    data_dir_x,
+    data_dir_y,
     batch_size,
     bit_depth,
     dim1, 
