@@ -2,7 +2,6 @@
 
 
 echo 'copying results to results folder:' $1
-echo 'test'
 cp -r /home/jr0th/github/segmentation/logs /home/jr0th/github/segmentation/results/$1
 
 echo 'copied logs'

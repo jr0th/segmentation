@@ -77,6 +77,77 @@ def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
                 str(sklearn.metrics.log_loss(y_pred = pred_prob_map_vec, y_true = true_prob_map_vec)) +
                '\n')
         f.close()
+        
+def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
+
+    print('VISUALIZE', pred_y.shape, true_y.shape)
+    plt.figure()
+    plt.hist(pred_y.flatten())
+    plt.savefig(out_dir + label + '_' + 'hist_probmap_boundary')
+
+    # print all samples for visual inspection
+    nSamples = pred_y.shape[0]
+
+    for sampleIndex in range(nSamples):
+
+        nCols = 4
+        figure, axes = plt.subplots(ncols=nCols, nrows=1, figsize=(nCols*5, 5))
+        figure.tight_layout(pad = 1)
+
+        predFig = axes[0]
+        trueFig = axes[1]
+        compFig = axes[2]
+        cmatFig = axes[3]
+        
+        pred_prob_map = pred_y[sampleIndex,:,:,0]
+        pred = pred_prob_map >= 0.5
+        
+
+        
+        true = true_y[sampleIndex,:,:,0]
+        true = true.astype(np.bool)
+        
+        print(pred.dtype)
+        print(true.dtype)
+        
+        comp = pred != true
+        
+        cmat = sklearn.metrics.confusion_matrix(y_true = true.flatten(), y_pred = pred.flatten()) #, labels=[0,1])
+
+        predFig.imshow(skimage.color.label2rgb(pred, image=true_x[sampleIndex,:,:,0]))
+        trueFig.imshow(skimage.color.label2rgb(true, image=true_x[sampleIndex,:,:,0]))
+        compFig.imshow(skimage.color.label2rgb(comp, image=true_x[sampleIndex,:,:,0]))
+        cmatFig.matshow(cmat, cmap = "cool")
+        
+        predFig.set_title('Prediction')
+        trueFig.set_title('Truth')
+        compFig.set_title('Errors')
+
+        predFig.axis('off')
+        trueFig.axis('off')
+        compFig.axis('off')
+        
+        cmatFig.set_ylabel('truth')
+        cmatFig.set_xlabel('prediction')
+        
+        # annotate share of pred
+        for x in range(2):
+            for y in range(2):
+                cmatFig.annotate(str(np.round(cmat[x,y],2)), xy=(y, x), 
+                        horizontalalignment='center',
+                        verticalalignment='center', fontsize = 15)
+        
+        plt.savefig(out_dir + label + '_' + str(sampleIndex) + '_vis')
+        classNames = ['background', 'boundary']
+        
+        print('HERE', np.mean(true))
+        
+        # write cross entropy
+        ce = sklearn.metrics.log_loss(y_pred = pred.flatten(), y_true = true.flatten())
+        
+        f = open(out_dir + '/' + label + '_' + str(sampleIndex) + '.txt', 'w')
+        f.write('Cross Entropy: ' + str(ce) + '\n')
+        f.close()
 
 def visualize_learning_stats(statistics, out_dir, metrics):
     plt.figure()

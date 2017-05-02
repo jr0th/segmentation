@@ -73,6 +73,42 @@ def single_data_from_images(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):
     
     return flow
 
+def single_data_from_images_1d_y(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):
+
+    rescale_factor = 1./(2**bit_depth - 1)
+    rescale_labels = False
+    
+    if(rescale_labels):
+        rescale_factor_labels = rescale_factor
+    else:
+        rescale_factor_labels = 1
+
+    gen_x = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor)
+    gen_y = keras.preprocessing.image.ImageDataGenerator(rescale=rescale_factor_labels)
+    
+    seed = 42
+
+    stream_x = gen_x.flow_from_directory(
+        x_dir,
+        target_size=(dim1,dim2),
+        color_mode='grayscale',
+        batch_size=batch_size,
+        class_mode=None,
+        seed=seed
+    )
+    stream_y = gen_y.flow_from_directory(
+        y_dir,
+        target_size=(dim1,dim2),
+        color_mode='grayscale',
+        batch_size=batch_size,
+        class_mode=None,
+        seed=seed
+    )
+    
+    flow = zip(stream_x, stream_y)
+    
+    return flow
+
 def data_from_images_segmentation(file_path, data_dir, label_dir, classes, batch_size, dim1, dim2):
     generator = helper.external.SegDataGenerator.SegDataGenerator()
     iterator = generator.flow_from_directory(
