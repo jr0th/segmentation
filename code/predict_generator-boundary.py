@@ -13,9 +13,9 @@ data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/y_bound
 
 
 out_label = 'pred_generator'
-out_dir = '/home/jr0th/github/segmentation/out_boundary/'
-# data_dir = '/home/jr0th/github/segmentation/data/BBBC022/'
-weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint_boundary.hdf5'
+out_dir = '/home/jr0th/github/segmentation/out_boundary_2/'
+
+weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint_boundary_2.hdf5'
 batch_size = 10
 bit_depth = 8
 

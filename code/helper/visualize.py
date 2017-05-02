@@ -102,13 +102,12 @@ def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
         pred_prob_map = pred_y[sampleIndex,:,:,0]
         pred = pred_prob_map >= 0.5
         
-
-        
         true = true_y[sampleIndex,:,:,0]
         true = true.astype(np.bool)
         
-        print(pred.dtype)
-        print(true.dtype)
+        print('TRUE MEAN', np.mean(true))
+        print('PRED_PROB_MAP MEAN', np.mean(pred_prob_map))
+        print('PRED MEAN', np.mean(pred))
         
         comp = pred != true
         
@@ -140,8 +139,6 @@ def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
         plt.savefig(out_dir + label + '_' + str(sampleIndex) + '_vis')
         classNames = ['background', 'boundary']
         
-        print('HERE', np.mean(true))
-        
         # write cross entropy
         ce = sklearn.metrics.log_loss(y_pred = pred.flatten(), y_true = true.flatten())
         
@@ -166,6 +163,27 @@ def visualize_learning_stats(statistics, out_dir, metrics):
     plt.ylabel("Accuracy")
     plt.plot(statistics.history["categorical_accuracy"])
     plt.plot(statistics.history["val_categorical_accuracy"])
+    plt.legend(["Training", "Validation"])
+
+    plt.savefig(out_dir + "plot_accuracy")
+    
+def visualize_learning_stats_boundary(statistics, out_dir, metrics):
+    plt.figure()
+
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.plot(statistics.history["loss"])
+    # plt.plot(statistics.history["val_loss"])
+    plt.legend(["Training"])#, "Validation"])
+
+    plt.savefig(out_dir + "plot_loss")
+    
+    plt.figure()
+
+    plt.xlabel("Epoch")
+    plt.ylabel("Accuracy")
+    plt.plot(statistics.history["binary_accuracy"])
+    plt.plot(statistics.history["val_binary_accuracy"])
     plt.legend(["Training", "Validation"])
 
     plt.savefig(out_dir + "plot_accuracy")

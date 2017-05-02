@@ -145,8 +145,7 @@ def get_model_1_class(dim1, dim2):
     
     [x, y] = get_core(dim1, dim2)
     
-    y = keras.layers.Convolution2D(1, 1, 1, **option_dict_conv)(y)
-    y = keras.layers.Activation("sigmoid")(y)
+    y = keras.layers.Convolution2D(1, 1, padding="same", activation="sigmoid")(y)
     
     model = keras.models.Model(x,y)
 

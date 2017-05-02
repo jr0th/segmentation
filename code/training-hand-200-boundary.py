@@ -24,9 +24,11 @@ import tensorflow as tf
 import numpy as np
 
 # constants
-const_lr = 1e-4
+const_lr = 1e-3
 
-out_dir = "../out_boundary/"
+chkpt_file = "../checkpoints/checkpoint_boundary_2.hdf5"
+
+out_dir = "../out_boundary_2/"
 tb_log_dir = "../logs/logs_tensorboard_boundary/"
 
 train_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/x'
@@ -37,7 +39,7 @@ val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_
 
 data_type = "images" # "images" or "array"
 
-nb_epoch = 100
+nb_epoch =  10 # 500
 batch_size = 10
 nb_batches = int(400 / batch_size) # 100 images, 400 patches
 
@@ -49,7 +51,7 @@ file_path = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/all_files_wo_
 classes = 3
 
 # make sure these matches number for to the validation set
-val_steps = int(200 / batch_size) # 50 images, 200 patches
+val_steps = 1 # int(200 / batch_size) # 50 images, 200 patches
 
 dim1 = 256
 dim2 = 256
@@ -57,7 +59,7 @@ dim2 = 256
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "0"
+configuration.gpu_options.visible_device_list = "1"
 session = tf.Session(config = configuration)
 
 # apply session
@@ -77,7 +79,7 @@ model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 
 # CALLBACKS
 # save model after each epoch
-callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath="../checkpoints/checkpoint_boundary.hdf5", save_weights_only=True, save_best_only=True)
+callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=chkpt_file, save_weights_only=True, save_best_only=True)
 callback_csv = keras.callbacks.CSVLogger(filename="../logs/log_boundary.csv")
 callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, val_gen, gen_calls = val_steps, log_dir=tb_log_dir)
 callback_tensorboard = keras.callbacks.TensorBoard(log_dir=tb_log_dir, histogram_freq=1)
@@ -97,5 +99,5 @@ statistics = model.fit_generator(
 )
     
 # visualize learning stats
-helper.visualize.visualize_learning_stats(statistics, out_dir, metrics)
+helper.visualize.visualize_learning_stats_boundary(statistics, out_dir, metrics)
 print('Done! :)')
