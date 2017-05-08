@@ -3,7 +3,7 @@ data/
 logs/
 checkpoints/
 out/
-out_boundary/
+out_boundary_*/
 results/
 
 experiments/BBBC022_hand/GT_labels

@@ -24,22 +24,22 @@ import tensorflow as tf
 import numpy as np
 
 # constants
-const_lr = 1e-3
+const_lr = 1e-4
 
-chkpt_file = "../checkpoints/checkpoint_boundary_2.hdf5"
+chkpt_file = "../checkpoints/checkpoint_boundary_6.hdf5"
 
-out_dir = "../out_boundary_2/"
+out_dir = "../out_boundary_6/"
 tb_log_dir = "../logs/logs_tensorboard_boundary/"
 
 train_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/x'
-train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_boundary_2'
+train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_boundary_6'
 
 val_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/x'
-val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_boundary_2'
+val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_boundary_6'
 
 data_type = "images" # "images" or "array"
 
-nb_epoch =  10 # 500
+nb_epoch =  30 # 500
 batch_size = 10
 nb_batches = int(400 / batch_size) # 100 images, 400 patches
 
