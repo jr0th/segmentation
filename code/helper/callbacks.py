@@ -19,6 +19,7 @@ class SplitsAndMergesLogger(keras.callbacks.TensorBoard):
         super().__init__(log_dir, histogram_freq, write_graph, write_images)
         self.data_type = data_type
         self.gen_calls = gen_calls
+        
         # if data_type == "images" expect generator, if "array" expect [x, y] numpy arrays.
         self.data = data
 
