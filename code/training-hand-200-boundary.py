@@ -26,32 +26,28 @@ import numpy as np
 # constants
 const_lr = 1e-4
 
-chkpt_file = "../checkpoints/checkpoint_boundary_6.hdf5"
+chkpt_file = "../checkpoints/checkpoint_boundary_8.hdf5"
 
-out_dir = "../out_boundary_6/"
-tb_log_dir = "../logs/logs_tensorboard_boundary/"
+out_dir = "../out_boundary_8/"
+tb_log_dir = "../logs/logs_tensorboard_boundary_8/"
 
 train_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/x'
-train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_boundary_6'
+train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_boundary_8'
 
 val_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/x'
-val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_boundary_6'
+val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_boundary_8'
 
 data_type = "images" # "images" or "array"
 
-nb_epoch =  30 # 500
+nb_epoch =  100
 batch_size = 10
 nb_batches = int(400 / batch_size) # 100 images, 400 patches
 
 # images and masks are in 8 bit
 bit_depth = 8
 
-# SEGMENTATION DATA GENERATOR
-file_path = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/all_files_wo_ext.txt'
-classes = 3
-
 # make sure these matches number for to the validation set
-val_steps = 1 # int(200 / batch_size) # 50 images, 200 patches
+val_steps = int(200 / batch_size) # 50 images, 200 patches
 
 dim1 = 256
 dim2 = 256
@@ -81,11 +77,11 @@ model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 # save model after each epoch
 callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=chkpt_file, save_weights_only=True, save_best_only=True)
 callback_csv = keras.callbacks.CSVLogger(filename="../logs/log_boundary.csv")
-callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger(data_type, val_gen, gen_calls = val_steps, log_dir=tb_log_dir)
+callback_splits_and_merges = helper.callbacks.SplitsAndMergesLoggerBoundary(data_type, val_gen, gen_calls = val_steps, log_dir=tb_log_dir)
 callback_tensorboard = keras.callbacks.TensorBoard(log_dir=tb_log_dir, histogram_freq=1)
 
-# callbacks=[callback_model_checkpoint, callback_csv, callback_splits_and_merges]
-callbacks = [callback_model_checkpoint, callback_csv, callback_tensorboard]
+callbacks=[callback_model_checkpoint, callback_csv, callback_splits_and_merges]
+# callbacks = [callback_model_checkpoint, callback_csv, callback_tensorboard]
 
 statistics = model.fit_generator(
     epochs=nb_epoch,

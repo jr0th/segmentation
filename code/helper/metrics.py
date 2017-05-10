@@ -23,6 +23,46 @@ def recall(y_true, y_pred):
     return recall
 
 
+## PROBMAP TO CONTOURS TO LABEL
+
+def probmap_to_contour(probmap):
+    # assume 2D input
+    outline = probmap >= 0.5
+    
+    return outline
+
+def contour_to_label(outline, image):
+    # see notebook contours_to_labels for why we do what we do here
+    
+    # get connected components
+    labels = skimage.morphology.label(outline, background=1)
+    
+    n_ccs = np.max(labels)
+
+    # buffer label image
+    filtered_labels = np.zeros_like(labels, dtype=np.uint16)
+
+    # relabel as we don't know what connected component the background has been given before
+    label_index = 1
+    
+    # start at 1 (0 is contours), end at number of connected components
+    for i in range(1, n_ccs + 1):
+
+        # get mask of connected compoenents
+        mask = labels == i
+
+        # get mean
+        mean = np.mean(np.take(image.flatten(),np.nonzero(mask.flatten())))
+
+        if(mean > 50/255):
+            filtered_labels[mask] = label_index
+            label_index = label_index + 1
+            
+    return filtered_labels
+
+
+## PROBMAP TO PRED TO LABEL
+
 def probmap_to_pred(probmap, boundary_boost_factor):
     # we need to boost the boundary class to make it more visible
     # this shrinks the cells a little bit but avoids undersegmentation
@@ -55,7 +95,6 @@ def compare_two_labels(label_model, label_gt, return_IoU_matrix):
             return [0, 0, 1, np.empty(0)]     
         else:
             return [0, 0, 1]
-
     
     # catch the case of empty picture in model
     if nb_nuclei_model == 0:
@@ -110,7 +149,7 @@ def compare_two_labels(label_model, label_gt, return_IoU_matrix):
         result = [nb_overdetection, nb_underdetection, mean_IoU]
     return result
 
-def splits_and_merges(y_model_pred, y_gt_pred):
+def splits_and_merges_3_class(y_model_pred, y_gt_pred):
     
     # get segmentations
     label_gt = pred_to_label(y_gt_pred, cell_min_size=2)
@@ -121,21 +160,13 @@ def splits_and_merges(y_model_pred, y_gt_pred):
         
     return result
 
-# test
-if(debug):
-    y_model = np.load('/home/jr0th/github/segmentation/code/analysis/data/y_probmap/0f1f106b-057a-482c-93bb-c9a0b044c054.npy')
-    y_gt_pred = skimage.io.imread('/home/jr0th/github/segmentation/code/analysis/data/y_gt/0f1f106b-057a-482c-93bb-c9a0b044c054.png')
-
-    # y_model = np.array([[[[0.5, 0.3, 0.2], [0.1, 0.3, 0.6]], [[0.45, 0.5, 0.05], [0.1, 0.8, 0.1]]]])
-    # y_gt = np.array([[[[0, 1, 0], [1, 0, 0]], [[0, 1, 0], [0, 0, 1]]]])
-
-    # get prediction from model output
-    print(y_model.shape)
-    y_model_pred = probmap_to_pred(y_model, 1)
-    print(y_model_pred.shape)
-    print('y_gt_pred: ', y_gt_pred)
-    print('y_model_pred: ', y_model_pred)
-
-    # get splits and merges from prediction
-    S_M = splits_and_merges(y_model_pred, y_gt_pred)
-    print('S_M: ', S_M)
+def splits_and_merges_boundary(y_model_outline, y_gt_outline, image):
+    
+    # get segmentations
+    label_gt = contour_to_label(y_gt_outline, image)
+    label_model = contour_to_label(y_model_outline, image)
+    
+    # compare labels
+    result = compare_two_labels(label_model, label_gt, False)
+        
+    return result
