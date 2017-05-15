@@ -5,7 +5,10 @@ import tensorflow as tf
 # hyperparameters TODO maybe move to main file?
 FLAG_BN = True
 FLAG_DO = False
+FLAG_DO_LAST_LAYER = False
 CONST_DO_RATE = 0.5
+
+
 
 option_dict_conv = {"activation": "relu", "border_mode": "same"}
 option_dict_bn = {"mode": 0, "momentum" : 0.9}
@@ -122,7 +125,7 @@ def get_core(dim1, dim2):
     y = keras.layers.Convolution2D(64, 3, 3, **option_dict_conv)(y)
     if FLAG_BN:
         y = keras.layers.BatchNormalization(**option_dict_bn)(y)
-    if FLAG_DO:
+    if FLAG_DO_LAST_LAYER:
         y = keras.layers.Dropout(CONST_DO_RATE)(y)
     
     return [x, y]

@@ -184,7 +184,6 @@ class SplitsAndMergesLoggerBoundary(keras.callbacks.TensorBoard):
                 
                 result = self.get_error_for_batch(x_batch, y_batch)
                 
-                print('RESULT FOR BATCH: ', result)
                 results = np.vstack((results, result))
             
         elif self.data_type == "array":
