@@ -9,13 +9,13 @@ import matplotlib.pyplot as plt
 import sys
 
 data_dir_x = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/x/"
-data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/y_boundary_2/"
+data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/y_boundary_4/"
 
 
 out_label = 'pred_generator'
-out_dir = '/home/jr0th/github/segmentation/out_boundary_2/'
+out_dir = '/home/jr0th/github/segmentation/out_boundary_4_generator/'
 
-weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint_boundary_2.hdf5'
+weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint_boundary_4_generator.hdf5'
 batch_size = 10
 bit_depth = 8
 

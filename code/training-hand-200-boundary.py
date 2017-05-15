@@ -26,16 +26,19 @@ import numpy as np
 # constants
 const_lr = 1e-4
 
-chkpt_file = "../checkpoints/checkpoint_boundary_8.hdf5"
+chkpt_file = "../checkpoints/checkpoint_boundary_soft.hdf5"
 
-out_dir = "../out_boundary_8/"
-tb_log_dir = "../logs/logs_tensorboard_boundary_8/"
+out_dir = "../out_boundary_soft/"
+tb_log_dir = "../logs/logs_tensorboard_boundary_soft/"
 
 train_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/x'
-train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_boundary_8'
+train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_boundary_soft'
 
 val_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/x'
-val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_boundary_8'
+val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_boundary_soft'
+
+hard = False # True
+
 
 data_type = "images" # "images" or "array"
 
@@ -55,7 +58,7 @@ dim2 = 256
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "1"
+configuration.gpu_options.visible_device_list = "2"
 session = tf.Session(config = configuration)
 
 # apply session
@@ -68,9 +71,14 @@ val_gen = helper.data_provider.single_data_from_images_1d_y(val_dir_x, val_dir_y
 # build model
 model = helper.model_builder.get_model_1_class(dim1, dim2)
 model.summary()
-loss = "binary_crossentropy"
+if(hard):
+    loss = "binary_crossentropy"
+    metrics = [keras.metrics.binary_accuracy, helper.metrics.recall, helper.metrics.precision]
+else:
+    loss = "mean_squared_error"
+    metrics = []
 optimizer = keras.optimizers.RMSprop(lr = const_lr)
-metrics = [keras.metrics.binary_accuracy, helper.metrics.recall, helper.metrics.precision]
+
 model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 
 # CALLBACKS
