@@ -11,9 +11,9 @@ data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/y_bound
 
 
 out_label = 'pred_generator'
-out_dir = '/home/jr0th/github/segmentation/out_boundary_4_generator_no_skip/'
+out_dir = '/home/jr0th/github/segmentation/out_boundary_4_generator/'
 
-weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint_boundary_4_generator_no_skip.hdf5'
+weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint_boundary_4_generator.hdf5'
 batch_size = 10
 bit_depth = 8
 
@@ -31,7 +31,7 @@ test_generator = helper.data_provider.single_data_from_images_1d_y(
 )
 
 # build model and laod weights
-model = helper.model_builder.get_model_1_class_no_skip(dim1, dim2)
+model = helper.model_builder.get_model_1_class(dim1, dim2)
 model.load_weights(weights_path)
 
 # get one batch of data from the generator

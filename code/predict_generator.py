@@ -13,9 +13,9 @@ data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/y_label
 
 
 out_label = 'pred_generator'
-out_dir = '/home/jr0th/github/segmentation/out/'
+out_dir = '/home/jr0th/github/segmentation/out_3class_random/'
 # data_dir = '/home/jr0th/github/segmentation/data/BBBC022/'
-weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint.hdf5'
+weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint_3class_random.hdf5'
 batch_size = 10
 bit_depth = 8
 
