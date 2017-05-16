@@ -72,7 +72,7 @@ class SplitsAndMergesLogger3Class(keras.callbacks.TensorBoard):
         super().on_epoch_end(epoch, logs)
         
         if self.data_type == "images":
-            # predict stuff from images – use generator
+            # predict stuff from images - use generator
             
             # buffer for all results
             results = np.empty(shape = (0, 3), dtype = np.float16)        
@@ -170,7 +170,7 @@ class SplitsAndMergesLoggerBoundary(keras.callbacks.TensorBoard):
         super().on_epoch_end(epoch, logs)
         
         if self.data_type == "images":
-            # predict stuff from images – use generator
+            # predict stuff from images - use generator
             
             # buffer for all results
             results = np.empty(shape = (0, 3), dtype = np.float16)        
