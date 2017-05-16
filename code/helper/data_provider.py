@@ -126,6 +126,11 @@ def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, d
     y_big = skimage.io.imread_collection(y_big_dir + '*.png').concatenate()
     print('Found',len(y_big), 'annotations.')
     
+    if(len(y_big.shape) == 3):
+        gray = True
+    else:
+        gray = False
+    
     if(debug):
         fig = plt.figure()
         plt.hist(y_big.flatten())
@@ -144,7 +149,7 @@ def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, d
     
     # rescale images
     rescale_factor = 1./(2**bit_depth - 1)
-    rescale_labels = False
+    rescale_labels = True
     
     if(rescale_labels):
         rescale_factor_labels = rescale_factor
@@ -153,9 +158,13 @@ def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, d
         
     while(True):
         
+        if(gray):
+            y_channels = 1
+        else:
+            y_channels = 3
         # buffers for a batch of data
         x = np.zeros((batch_size, dim1, dim2, 1))
-        y = np.zeros((batch_size, dim1, dim2, 1))
+        y = np.zeros((batch_size, dim1, dim2, y_channels))
         
         # get one image at a time
         for i in range(batch_size):
@@ -169,7 +178,7 @@ def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, d
             
             # save image to buffer
             x[i, :, :, 0] = x_big[img_index, start_dim1:start_dim1 + dim1, start_dim2:start_dim2 + dim2] * rescale_factor
-            y[i, :, :, 0] = y_big[img_index, start_dim1:start_dim1 + dim1, start_dim2:start_dim2 + dim2] * rescale_factor_labels
+            y[i, :, :, 0:y_channels] = y_big[img_index, start_dim1:start_dim1 + dim1, start_dim2:start_dim2 + dim2] * rescale_factor_labels
             
             if(debug):
                 fig = plt.figure()
