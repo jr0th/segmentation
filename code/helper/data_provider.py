@@ -2,6 +2,10 @@ import numpy as np
 import keras.preprocessing.image
 import helper.external.SegDataGenerator
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 import skimage.io
 
 def data_from_array(data_dir):
@@ -78,7 +82,7 @@ def single_data_from_images(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):
 def single_data_from_images_1d_y(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):
 
     rescale_factor = 1./(2**bit_depth - 1)
-    rescale_labels = True
+    rescale_labels = False
     
     if(rescale_labels):
         rescale_factor_labels = rescale_factor
@@ -114,11 +118,24 @@ def single_data_from_images_1d_y(x_dir, y_dir, batch_size, bit_depth, dim1, dim2
 
 def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, dim2):
 
+    debug = False
+    
     # get images
     x_big = skimage.io.imread_collection(x_big_dir + '*.png').concatenate()
     print('Found',len(x_big), 'images.')
     y_big = skimage.io.imread_collection(y_big_dir + '*.png').concatenate()
     print('Found',len(y_big), 'annotations.')
+    
+    if(debug):
+        fig = plt.figure()
+        plt.hist(y_big.flatten())
+        plt.savefig('/home/jr0th/github/segmentation/code/generated/y_hist')
+        plt.close(fig)
+
+        fig = plt.figure()
+        plt.hist(x_big.flatten())
+        plt.savefig('/home/jr0th/github/segmentation/code/generated/x_hist')
+        plt.close(fig)
     
     # get dimensions right – understand data set
     n_images = x_big.shape[0]
@@ -133,7 +150,7 @@ def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, d
         rescale_factor_labels = rescale_factor
     else:
         rescale_factor_labels = 1
-    
+        
     while(True):
         
         # buffers for a batch of data
@@ -151,11 +168,25 @@ def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, d
             start_dim2 = np.random.randint(low=0, high=dim2_size+1-dim2)
             
             # save image to buffer
-            x[i, :, :, 0] = x_big[img_index, start_dim1, start_dim1 + dim1] * rescale_factor
-            y[i, :, :, 0] = x_big[img_index, start_dim1, start_dim1 + dim1] * rescale_factor_labels
+            x[i, :, :, 0] = x_big[img_index, start_dim1:start_dim1 + dim1, start_dim2:start_dim2 + dim2] * rescale_factor
+            y[i, :, :, 0] = y_big[img_index, start_dim1:start_dim1 + dim1, start_dim2:start_dim2 + dim2] * rescale_factor_labels
+            
+            if(debug):
+                fig = plt.figure()
+                plt.imshow(x[i, :, :, 0])
+                plt.colorbar()
+                plt.savefig('/home/jr0th/github/segmentation/code/generated/x_' + str(i))
+                plt.close(fig)
+
+                fig = plt.figure()
+                plt.imshow(y[i, :, :, 0])
+                plt.colorbar()
+                plt.savefig('/home/jr0th/github/segmentation/code/generated/y_' + str(i))
+                plt.close(fig)
             
         # return the buffer
         yield(x, y)
+        
 
 
 def single_data_from_images_random(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):

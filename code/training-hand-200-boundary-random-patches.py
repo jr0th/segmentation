@@ -27,7 +27,7 @@ import numpy as np
 const_lr = 1e-4
 
 chkpt_file = "../checkpoints/checkpoint_boundary_4_generator.hdf5"
-csv_log_file = "../logs/log_boundary.csv"
+csv_log_file = "../logs/log_boundary_4_generator.csv"
 
 out_dir = "../out_boundary_4_generator/"
 tb_log_dir = "../logs/logs_tensorboard_boundary_4_generator/"
@@ -35,8 +35,8 @@ tb_log_dir = "../logs/logs_tensorboard_boundary_4_generator/"
 train_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/random_patches/training/x_big/all/'
 train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/random_patches/training/y_big_boundary_4/all/'
 
-val_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/x_big/'
-val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_big_boundary_4/'
+val_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/x/'
+val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_boundary_4/'
 
 data_type = "images" # "images" or "array"
 
@@ -58,7 +58,7 @@ dim2 = 256
 # build session running on a specific GPU
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "2"
+configuration.gpu_options.visible_device_list = "1"
 session = tf.Session(config = configuration)
 
 # apply session
@@ -66,7 +66,7 @@ keras.backend.set_session(session)
     
 # get training generator
 train_gen = helper.data_provider.random_sample_generator(train_dir_x, train_dir_y, batch_size, bit_depth, dim1, dim2)
-val_gen = helper.data_provider.random_sample_generator(val_dir_x, val_dir_y, batch_size, bit_depth, dim1, dim2)
+val_gen = helper.data_provider.single_data_from_images_1d_y(val_dir_x, val_dir_y, batch_size, bit_depth, dim1, dim2)
 
 # build model
 model = helper.model_builder.get_model_1_class(dim1, dim2)
@@ -88,6 +88,7 @@ callback_csv = keras.callbacks.CSVLogger(filename=csv_log_file)
 callback_splits_and_merges = helper.callbacks.SplitsAndMergesLoggerBoundary(data_type, val_gen, gen_calls = val_steps, log_dir=tb_log_dir)
 callback_tensorboard = keras.callbacks.TensorBoard(log_dir=tb_log_dir, histogram_freq=1)
 
+# Use callback_tensorboard instead of callback_splits_and_merges to speed up the training process
 callbacks=[callback_model_checkpoint, callback_csv, callback_splits_and_merges]
 
 statistics = model.fit_generator(

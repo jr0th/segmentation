@@ -153,3 +153,116 @@ def get_model_1_class(dim1, dim2):
     model = keras.models.Model(x,y)
 
     return model
+
+
+def get_model_1_class_no_skip(dim1, dim2):
+    
+    x = keras.layers.Input(shape=(dim1, dim2, 1))
+
+    # DOWN
+
+    y = keras.layers.Convolution2D(64, 3, 3, **option_dict_conv)(x)  
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.Convolution2D(64, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.MaxPooling2D()(y)
+
+    y = keras.layers.Convolution2D(128, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.Convolution2D(128, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.MaxPooling2D()(y)
+
+    y = keras.layers.Convolution2D(256, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.Convolution2D(256, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.MaxPooling2D()(y)
+
+    y = keras.layers.Convolution2D(512, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.Convolution2D(512, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    # UP
+
+    y = keras.layers.UpSampling2D()(y)
+
+    y = keras.layers.Convolution2D(256, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.Convolution2D(256, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.UpSampling2D()(y)
+
+    y = keras.layers.Convolution2D(128, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.Convolution2D(128, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.UpSampling2D()(y)
+
+    # HEAD
+
+    y = keras.layers.Convolution2D(64, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.Convolution2D(64, 3, 3, **option_dict_conv)(y)
+    if FLAG_BN:
+        y = keras.layers.BatchNormalization(**option_dict_bn)(y)
+    if FLAG_DO_LAST_LAYER:
+        y = keras.layers.Dropout(CONST_DO_RATE)(y)
+
+    y = keras.layers.Convolution2D(1, 1, padding="same", activation="sigmoid")(y)
+    
+    model = keras.models.Model(x,y)
+    
+    return model

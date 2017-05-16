@@ -1,13 +1,13 @@
-
 import matplotlib
-matplotlib.use('PDF')
-
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 import skimage.io
 import sklearn.metrics
 
 import numpy as np
+
+out_format = 'svg'
 
 def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
 
@@ -16,7 +16,7 @@ def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
 
     plt.figure()
     plt.hist(pred_y[1,:,:,2].flatten())
-    plt.savefig(out_dir + label + '_' + 'hist_probmap_boundary')
+    plt.savefig(out_dir + label + '_' + 'hist_probmap_boundary' + '.' + out_format, format=out_format)
 
     # print all samples for visual inspection
     nSamples = pred_y.shape[0]
@@ -66,7 +66,7 @@ def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
                         horizontalalignment='center',
                         verticalalignment='center', fontsize = 15)
         
-        plt.savefig(out_dir + label + '_' + str(sampleIndex) + '_vis')
+        plt.savefig(out_dir + label + '_' + str(sampleIndex) + '_vis' + '.' + out_format, format=out_format)
         classNames = ['background', 'interior', 'boundary']
         f = open(out_dir + '/' + label + '_' + str(sampleIndex) + '.txt', 'w')
         f.write(sklearn.metrics.classification_report(pred.flatten(), true.flatten(), target_names=classNames) + '\n')
@@ -83,7 +83,7 @@ def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
     print('VISUALIZE', pred_y.shape, true_y.shape)
     plt.figure()
     plt.hist(pred_y.flatten())
-    plt.savefig(out_dir + label + '_' + 'hist_probmap_boundary')
+    plt.savefig(out_dir + label + '_' + 'hist_probmap_boundary' + '.' + out_format, format=out_format)
 
     # print all samples for visual inspection
     nSamples = pred_y.shape[0]
@@ -93,7 +93,7 @@ def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
         nCols = 3
         nRows = 2
         figure, axes = plt.subplots(ncols=nCols, nrows=2, figsize=(nCols*5+2, nRows*5+2))
-        # figure.tight_layout(pad = 1)
+        figure.tight_layout(pad = 1)
 
         origFig = axes[0,0]
         trueFig = axes[0,1]
@@ -152,7 +152,7 @@ def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
                         horizontalalignment='center',
                         verticalalignment='center', fontsize = 15)
         
-        plt.savefig(out_dir + label + '_' + str(sampleIndex) + '_vis')
+        plt.savefig(out_dir + label + '_' + str(sampleIndex) + '_vis' + '.' + out_format, format=out_format)
         classNames = ['background', 'boundary']
         
         # write cross entropy
@@ -166,7 +166,7 @@ def visualize_boundary_soft(pred_y, true_x, true_y, out_dir='./', label=''):
 
     plt.figure()
     plt.hist(pred_y.flatten())
-    plt.savefig(out_dir + label + '_' + 'hist_probmap_boundary')
+    plt.savefig(out_dir + label + '_' + 'hist_probmap_boundary' + '.' + out_format, format=out_format)
 
     # print all samples for visual inspection
     nSamples = pred_y.shape[0]
@@ -201,7 +201,7 @@ def visualize_boundary_soft(pred_y, true_x, true_y, out_dir='./', label=''):
         trueFig.axis('off')
         compFig.axis('off')
         
-        plt.savefig(out_dir + label + '_' + str(sampleIndex) + '_vis')
+        plt.savefig(out_dir + label + '_' + str(sampleIndex) + '_vis' + '.' + out_format, format=out_format)
         classNames = ['background', 'boundary']
         
         # write mean squared error
@@ -220,7 +220,7 @@ def visualize_learning_stats(statistics, out_dir, metrics):
     plt.plot(statistics.history["val_loss"])
     plt.legend(["Training", "Validation"])
 
-    plt.savefig(out_dir + "plot_loss")
+    plt.savefig(out_dir + "plot_loss" + '.' + out_format, format=out_format)
     
     plt.figure()
 
@@ -230,7 +230,7 @@ def visualize_learning_stats(statistics, out_dir, metrics):
     plt.plot(statistics.history["val_categorical_accuracy"])
     plt.legend(["Training", "Validation"])
 
-    plt.savefig(out_dir + "plot_accuracy")
+    plt.savefig(out_dir + "plot_accuracy" + '.' + out_format, format=out_format)
     
 def visualize_learning_stats_boundary(statistics, out_dir, metrics):
     plt.figure()
@@ -238,10 +238,10 @@ def visualize_learning_stats_boundary(statistics, out_dir, metrics):
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.plot(statistics.history["loss"])
-    # plt.plot(statistics.history["val_loss"])
-    plt.legend(["Training"])#, "Validation"])
+    plt.plot(statistics.history["val_loss"])
+    plt.legend(["Training", "Validation"])
 
-    plt.savefig(out_dir + "plot_loss")
+    plt.savefig(out_dir + "plot_loss" + '.' + out_format, format=out_format)
     
     plt.figure()
 
@@ -251,4 +251,4 @@ def visualize_learning_stats_boundary(statistics, out_dir, metrics):
     plt.plot(statistics.history["val_binary_accuracy"])
     plt.legend(["Training", "Validation"])
 
-    plt.savefig(out_dir + "plot_accuracy")
+    plt.savefig(out_dir + "plot_accuracy" + '.' + out_format, format=out_format)
