@@ -4,6 +4,7 @@ logs/
 checkpoints/
 out/
 out_boundary_*/
+out_3class_*
 results/
 
 experiments/BBBC022_hand/GT_labels
