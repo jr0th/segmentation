@@ -1,21 +1,19 @@
+import helper.visualize
 import helper.data_provider
 import helper.model_builder
-import helper.visualize
 
 import skimage.io
-
-import matplotlib.pyplot as plt
 
 import sys
 
 data_dir_x = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/x/"
-data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/y_label_binary/"
+data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/y_label_binary_2/"
 
 
 out_label = 'pred_generator'
-out_dir = '/home/jr0th/github/segmentation/out_3class_random/'
-# data_dir = '/home/jr0th/github/segmentation/data/BBBC022/'
-weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint_3class_random.hdf5'
+out_dir = '/home/jr0th/github/segmentation/out_3class_random_2/'
+
+weights_path = '/home/jr0th/github/segmentation/checkpoints/checkpoint_3class_random_2.hdf5'
 batch_size = 10
 bit_depth = 8
 

@@ -26,17 +26,17 @@ import numpy as np
 # constants
 const_lr = 1e-4
 
-out_dir = "../out_3class_random_4/"
-tb_log_dir = "../logs/logs_tensorboard_3class_random_4/"
+out_dir = "../out_3class_random_8/"
+tb_log_dir = "../logs/logs_tensorboard_3class_random_8/"
 
-out_dir_log = "../logs/log_3class_random_4.csv"
-checkpoint_path = "../checkpoints/checkpoint_3class_random_4.hdf5"
+out_dir_log = "../logs/log_3class_random_8.csv"
+checkpoint_path = "../checkpoints/checkpoint_3class_random_8.hdf5"
 
 train_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/x_big/'
-train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_big_label_binary_4/'
+train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_big_label_binary_8/'
 
 val_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/x'
-val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_label_binary_4'
+val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_label_binary_8'
 
 data_type = "images" # "images" or "array"
 
@@ -56,7 +56,7 @@ dim2 = 256
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "0"
+configuration.gpu_options.visible_device_list = "2"
 session = tf.Session(config = configuration)
 
 # apply session
