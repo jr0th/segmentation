@@ -24,7 +24,6 @@ def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
     for sampleIndex in range(nSamples):
         nCols = 4
         figure, axes = plt.subplots(ncols=nCols, nrows=1, figsize=(nCols*5, 5))
-        figure.tight_layout(pad = 1)
 
         predFig = axes[0]
         trueFig = axes[1]
