@@ -27,7 +27,7 @@ def recall(y_true, y_pred):
 
 def probmap_to_contour(probmap):
     # assume 2D input
-    outline = probmap >= 0.5
+    outline = probmap >= 0.7
     
     return outline
 
@@ -36,6 +36,7 @@ def contour_to_label(outline, image):
     
     # get connected components
     labels = skimage.morphology.label(outline, background=1)
+    skimage.morphology.remove_small_objects(labels, min_size = 100, in_place = True)
     
     n_ccs = np.max(labels)
 
