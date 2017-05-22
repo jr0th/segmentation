@@ -1,12 +1,12 @@
 import numpy as np
 import keras.preprocessing.image
-import helper.external.SegDataGenerator
 
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 import skimage.io
+
 
 def data_from_array(data_dir):
     
@@ -35,6 +35,7 @@ def data_from_array(data_dir):
     
     return [training_x, training_y, validation_x, validation_y, test_x, test_y]
 
+
 def data_from_images(data_dir, batch_size, bit_depth, dim1, dim2):
     
     flow_train = single_data_from_images(data_dir + 'training/x/', data_dir + 'training/y/', batch_size, bit_depth, dim1, dim2)
@@ -42,6 +43,7 @@ def data_from_images(data_dir, batch_size, bit_depth, dim1, dim2):
     flow_test = single_data_from_images(data_dir + 'test/x', data_dir + 'test/y', batch_size, bit_depth, dim1, dim2)
     
     return [flow_train, flow_validation, flow_test]
+
 
 def single_data_from_images(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):
 
@@ -78,6 +80,7 @@ def single_data_from_images(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):
     flow = zip(stream_x, stream_y)
     
     return flow
+
 
 def single_data_from_images_1d_y(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):
 
@@ -119,6 +122,8 @@ def single_data_from_images_1d_y(x_dir, y_dir, batch_size, bit_depth, dim1, dim2
 def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, dim2):
 
     debug = False
+    do_augmentation = True
+    rescale_labels = False
     
     # get images
     x_big = skimage.io.imread_collection(x_big_dir + '*.png').concatenate()
@@ -149,8 +154,6 @@ def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, d
     
     # rescale images
     rescale_factor = 1./(2**bit_depth - 1)
-    rescale_labels = True
-    
     if(rescale_labels):
         rescale_factor_labels = rescale_factor
     else:
@@ -162,6 +165,7 @@ def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, d
             y_channels = 1
         else:
             y_channels = 3
+            
         # buffers for a batch of data
         x = np.zeros((batch_size, dim1, dim2, 1))
         y = np.zeros((batch_size, dim1, dim2, y_channels))
@@ -176,9 +180,31 @@ def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, d
             start_dim1 = np.random.randint(low=0, high=dim1_size+1-dim1)
             start_dim2 = np.random.randint(low=0, high=dim2_size+1-dim2)
             
+            patch_x = x_big[img_index, start_dim1:start_dim1 + dim1, start_dim2:start_dim2 + dim2] * rescale_factor
+            patch_y = y_big[img_index, start_dim1:start_dim1 + dim1, start_dim2:start_dim2 + dim2] * rescale_factor_labels
+            
+            if(do_augmentation):
+                
+                rand_flip = np.random.randint(low=0, high=2)
+                rand_rotate = np.random.randint(low=0, high=4)
+                
+                # flip
+                if(rand_flip == 0):
+                    patch_x = np.flip(patch_x, 0)
+                    patch_y = np.flip(patch_y, 0)
+                
+                # rotate
+                for rotate_index in range(rand_rotate):
+                    patch_x = np.rot90(patch_x)
+                    patch_y = np.rot90(patch_y)
+                    
             # save image to buffer
-            x[i, :, :, 0] = x_big[img_index, start_dim1:start_dim1 + dim1, start_dim2:start_dim2 + dim2] * rescale_factor
-            y[i, :, :, 0:y_channels] = y_big[img_index, start_dim1:start_dim1 + dim1, start_dim2:start_dim2 + dim2] * rescale_factor_labels
+            x[i, :, :, 0] = patch_x
+            
+            if(gray):
+                y[i, :, :, 0] = patch_y
+            else:
+                y[i, :, :, 0:y_channels] = patch_y
             
             if(debug):
                 fig = plt.figure()
@@ -195,67 +221,3 @@ def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, d
             
         # return the buffer
         yield(x, y)
-        
-
-
-def single_data_from_images_random(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):
-    
-    rescale_factor = 1./(2**bit_depth - 1)
-    rescale_labels = False
-    
-    if(rescale_labels):
-        rescale_factor_labels = rescale_factor
-    else:
-        rescale_factor_labels = 1
-
-    gen_x = keras.preprocessing.image.ImageDataGenerator(
-        rescale=rescale_factor,
-        preprocessing_function=pick_random_sample,
-        width_shift_range=1,
-        height_shift_range=1
-    )
-    gen_y = keras.preprocessing.image.ImageDataGenerator(
-        rescale=rescale_factor_labels,
-        preprocessing_function=pick_random_sample,
-        width_shift_range=1,
-        height_shift_range=1
-    )
-    
-    seed = 42
-
-    stream_x = gen_x.flow_from_directory(
-        x_dir,
-        target_size=(dim1,dim2),
-        color_mode='grayscale',
-        batch_size=batch_size,
-        class_mode=None,
-        save_to_dir='/home/jr0th/github/segmentation/code/generated',
-        save_format='png',
-        seed=seed
-    )
-    stream_y = gen_y.flow_from_directory(
-        y_dir,
-        target_size=(dim1,dim2),
-        color_mode='grayscale',
-        batch_size=batch_size,
-        class_mode=None,
-        seed=seed
-    )
-    
-    flow = zip(stream_x, stream_y)
-    print('RETURN FLOW')
-    return flow
-
-def data_from_images_segmentation(file_path, data_dir, label_dir, classes, batch_size, dim1, dim2):
-    generator = helper.external.SegDataGenerator.SegDataGenerator()
-    iterator = generator.flow_from_directory(
-        file_path,
-        data_dir, '.png', 
-        label_dir, '.png', 
-        classes, 
-        target_size=(dim1, dim2), 
-        color_mode='grayscale',
-        batch_size=batch_size,
-        save_to_dir='./temp/'
-    )
-    return iterator 
