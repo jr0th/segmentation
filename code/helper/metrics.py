@@ -27,7 +27,7 @@ def recall(y_true, y_pred):
 
 def probmap_to_contour(probmap):
     # assume 2D input
-    outline = probmap >= 0.7
+    outline = probmap >= 0.5
     
     return outline
 
