@@ -26,17 +26,16 @@ import numpy as np
 # constants
 const_lr = 1e-4
 
-out_dir = "../out_3class_random_8/"
-tb_log_dir = "../logs/logs_tensorboard_3class_random_8/"
+out_dir = "../out_3class_2/"
+tb_log_dir = "../logs/logs_tensorboard_3class_2/"
+out_dir_log = "../logs/log_3class_2.csv"
+checkpoint_path = "../checkpoints/3class_2/checkpoint_{epoch:04d}.hdf5"
 
-out_dir_log = "../logs/log_3class_random_8.csv"
-checkpoint_path = "../checkpoints/checkpoint_3class_random_8.hdf5"
-
-train_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/x_big/'
-train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_big_label_binary_8/'
+train_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/x/'
+train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_label_binary_2/'
 
 val_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/x'
-val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_label_binary_8'
+val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_label_binary_2/'
 
 data_type = "images" # "images" or "array"
 
@@ -56,14 +55,14 @@ dim2 = 256
 # build session running on GPU 1
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "2"
+configuration.gpu_options.visible_device_list = "0"
 session = tf.Session(config = configuration)
 
 # apply session
 keras.backend.set_session(session)
     
 # get data generators
-train_gen = helper.data_provider.random_sample_generator(train_dir_x, train_dir_y, batch_size, bit_depth, dim1, dim2)
+train_gen = helper.data_provider.single_data_from_images(train_dir_x, train_dir_y, batch_size, bit_depth, dim1, dim2)
 val_gen = helper.data_provider.single_data_from_images(val_dir_x, val_dir_y, batch_size, bit_depth, dim1, dim2)
     
 # build model
@@ -77,7 +76,10 @@ model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 # CALLBACKS
 # save model after each epoch
 callback_splits_and_merges = helper.callbacks.SplitsAndMergesLogger3Class(data_type, val_gen, gen_calls = val_steps, log_dir=tb_log_dir)
-callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=checkpoint_path, save_weights_only=True, save_best_only=True)
+callback_model_checkpoint = keras.callbacks.ModelCheckpoint(
+    filepath=checkpoint_path,
+    save_weights_only=True
+)
 callback_csv = keras.callbacks.CSVLogger(filename=out_dir_log)
 
 callback_tensorboard = keras.callbacks.TensorBoard(log_dir=tb_log_dir, histogram_freq=1)
