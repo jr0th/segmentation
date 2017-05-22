@@ -26,14 +26,14 @@ import numpy as np
 # constants
 const_lr = 1e-4
 
-chkpt_file = "../checkpoints/checkpoint_boundary_4_generator.hdf5"
-csv_log_file = "../logs/log_boundary_4_generator.csv"
+chkpt_file = "../checkpoints/boundary_4_random_augment/checkpoint_{epoch:04d}.hdf5"
+csv_log_file = "../logs/log_boundary_4_random_augment.csv"
 
-out_dir = "../out_boundary_4_generator/"
-tb_log_dir = "../logs/logs_tensorboard_boundary_4_generator/"
+out_dir = "../out_boundary_4_random_augment/"
+tb_log_dir = "../logs/logs_tensorboard_boundary_4_random_augment/"
 
-train_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/random_patches/training/x_big/all/'
-train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/random_patches/training/y_big_boundary_4/all/'
+train_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/x_big/'
+train_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/training/y_big_boundary_4/'
 
 val_dir_x = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/x/'
 val_dir_y = '/home/jr0th/github/segmentation/data/BBBC022_hand_200/validation/y_boundary_4/'
@@ -58,7 +58,7 @@ dim2 = 256
 # build session running on a specific GPU
 configuration = tf.ConfigProto()
 configuration.gpu_options.allow_growth = True
-configuration.gpu_options.visible_device_list = "1"
+configuration.gpu_options.visible_device_list = "2"
 session = tf.Session(config = configuration)
 
 # apply session
@@ -83,7 +83,7 @@ model.compile(loss=loss, metrics=metrics, optimizer=optimizer)
 
 # CALLBACKS
 # save model after each epoch
-callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=chkpt_file, save_weights_only=True, save_best_only=True)
+callback_model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=chkpt_file, save_weights_only=True, save_best_only=False)
 callback_csv = keras.callbacks.CSVLogger(filename=csv_log_file)
 callback_splits_and_merges = helper.callbacks.SplitsAndMergesLoggerBoundary(data_type, val_gen, gen_calls = val_steps, log_dir=tb_log_dir)
 callback_tensorboard = keras.callbacks.TensorBoard(log_dir=tb_log_dir, histogram_freq=1)
