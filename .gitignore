@@ -2,6 +2,7 @@
 data/
 logs/
 checkpoints/
+experiments/
 out/
 out_boundary_*/
 out_3class_*
