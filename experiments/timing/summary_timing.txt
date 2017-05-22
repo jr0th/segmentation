@@ -1,0 +1,35 @@
+full images
+
+w/o anything
+Mean time for inference:  0.09581246
+Mean time for post processing:  0.3024222
+
+higher threshold
+Mean time for inference:  0.09547836
+Mean time for post processing:  0.12373248
+
+remove small objects
+Mean time for inference:  0.09643986
+Mean time for post processing:  0.2785964
+
+higher threhsold & remove objects
+Mean time for inference:  0.09591096
+Mean time for post processing:  0.12022088
+
+crops
+
+w/o anything
+Mean time for inference:  0.02179843
+Mean time for post processing:  0.01783675
+
+higher threshold
+Mean time for inference:  0.02209629
+Mean time for post processing:  0.0087285
+
+remove small objects
+Mean time for inference:  0.02133841
+Mean time for post processing:  0.01778578
+
+higher threhsold & remove objects
+Mean time for inference:  0.02193422
+Mean time for post processing:  0.01059409
