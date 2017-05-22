@@ -2,7 +2,6 @@
 data/
 logs/
 checkpoints/
-experiments/B*
 out/
 out_boundary_*/
 out_3class_*
@@ -23,6 +22,13 @@ experiments/BBBC022_hand/DL_probmap
 # PYTHON CLUTTER
 __pycache__/
 *.pyc
+
+# IMAGES
+*.png
+*.tiff
+
+# NUMPY STUFF
+*.npy
 
 # IPYTHON NOTEBOOK CLUTTER
 .ipynb_checkpoints
