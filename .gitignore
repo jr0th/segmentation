@@ -13,6 +13,8 @@ experiments/BBBC022_hand/CP_labels
 experiments/BBBC022_hand/CP_labels_tiff
 experiments/BBBC022_hand/err_img_CP
 experiments/BBBC022_hand/err_img_DL
+experiments/BBBC022_hand_200/err_img_CP
+experiments/BBBC022_hand_200/err_img_DL
 experiments/BBBC022_hand_200/results_*
 experiments/BBBC022_hand_200/create_input_file_for_CP.ipynb
 
