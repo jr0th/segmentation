@@ -1,5 +1,4 @@
 # DIRECTORIES
-data/
 logs/
 checkpoints/
 out/
@@ -30,6 +29,7 @@ __pycache__/
 # IMAGES
 *.png
 *.tiff
+*.tif
 
 # NUMPY STUFF
 *.npy
