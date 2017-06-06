@@ -4,6 +4,7 @@ import keras.layers
 import keras.models
 import keras.optimizers
 
+
 import matplotlib
 matplotlib.use('SVG')
 
