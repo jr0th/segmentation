@@ -231,7 +231,7 @@ def visualize_learning_stats(statistics, out_dir, metrics):
 
     plt.savefig(out_dir + "plot_accuracy" + '.' + out_format, format=out_format)
     
-def visualize_learning_stats_boundary(statistics, out_dir, metrics):
+def visualize_learning_stats_boundary_hard(statistics, out_dir, metrics):
     plt.figure()
 
     plt.xlabel("Epoch")
@@ -251,3 +251,16 @@ def visualize_learning_stats_boundary(statistics, out_dir, metrics):
     plt.legend(["Training", "Validation"])
 
     plt.savefig(out_dir + "plot_accuracy" + '.' + out_format, format=out_format)
+    
+def visualize_learning_stats_boundary_soft(statistics, out_dir, metrics):
+    plt.figure()
+
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.plot(statistics.history["loss"])
+    plt.plot(statistics.history["val_loss"])
+    plt.legend(["Training", "Validation"])
+
+    plt.savefig(out_dir + "plot_loss" + '.' + out_format, format=out_format)
+    
+    plt.figure()
