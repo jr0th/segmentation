@@ -72,7 +72,7 @@ def probmap_to_pred(probmap, boundary_boost_factor):
     return pred
 
 
-def pred_to_label(pred, cell_min_size=300, cell_label=1):
+def pred_to_label(pred, cell_min_size, cell_label=1):
     
     cell = (pred == cell_label)
     # fix cells

@@ -45,10 +45,9 @@ def data_from_images(data_dir, batch_size, bit_depth, dim1, dim2):
     return [flow_train, flow_validation, flow_test]
 
 
-def single_data_from_images(x_dir, y_dir, batch_size, bit_depth, dim1, dim2):
+def single_data_from_images(x_dir, y_dir, batch_size, bit_depth, dim1, dim2, rescale_labels):
 
     rescale_factor = 1./(2**bit_depth - 1)
-    rescale_labels = True
     
     if(rescale_labels):
         rescale_factor_labels = rescale_factor

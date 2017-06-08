@@ -6,11 +6,15 @@ import skimage.io
 
 import sys
 
-data_dir_x = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/x/"
-data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022_hand_200/test/y_label_binary_2/"
+tag = "DL_on_CP"
 
-out_dir = '/home/jr0th/github/segmentation/out_3class_2/'
-weights_path = '/home/jr0th/github/segmentation/checkpoints/3class_2/checkpoint_0099.hdf5'
+data_dir_x = "/home/jr0th/github/segmentation/data/BBBC022/test/x/"
+data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022/test/y_label_cp/"
+
+out_dir = '/home/jr0th/github/segmentation/out/' + tag + '/'
+weights_path = '/home/jr0th/github/segmentation/checkpoints/' + tag + '/checkpoint_0001.hdf5'
+
+rescale_labels = True
 
 out_label = 'pred_generator'
 
@@ -27,7 +31,8 @@ test_generator = helper.data_provider.single_data_from_images(
     batch_size,
     bit_depth,
     dim1, 
-    dim2
+    dim2,
+    rescale_labels
 )
 
 # build model and laod weights
