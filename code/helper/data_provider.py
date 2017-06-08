@@ -117,11 +117,10 @@ def single_data_from_images_1d_y(x_dir, y_dir, batch_size, bit_depth, dim1, dim2
     return flow
 
 
-def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, dim2):
+def random_sample_generator(x_big_dir, y_big_dir, batch_size, bit_depth, dim1, dim2, rescale_labels):
 
     debug = False
     do_augmentation = True
-    rescale_labels = False
     
     # get images
     x_big = skimage.io.imread_collection(x_big_dir + '*.png').concatenate()

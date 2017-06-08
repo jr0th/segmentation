@@ -6,13 +6,13 @@ import skimage.io
 
 import sys
 
-tag = "DL_on_CP"
+tag = "DL_on_Hand_8"
 
 data_dir_x = "/home/jr0th/github/segmentation/data/BBBC022/test/x/"
-data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022/test/y_label_cp/"
+data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022/test/y_label_binary_8/"
 
 out_dir = '/home/jr0th/github/segmentation/out/' + tag + '/'
-weights_path = '/home/jr0th/github/segmentation/checkpoints/' + tag + '/checkpoint_0001.hdf5'
+weights_path = '/home/jr0th/github/segmentation/checkpoints/' + tag + '/checkpoint_0199.hdf5'
 
 rescale_labels = True
 
