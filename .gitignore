@@ -2,9 +2,7 @@
 logs/
 checkpoints/
 out/
-out_boundary_*/
-out_3class_*
-results/
+tensorboard/
 
 experiments/BBBC022_hand/GT_labels
 experiments/BBBC022_hand/DL_labels
