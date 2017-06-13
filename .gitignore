@@ -29,6 +29,9 @@ __pycache__/
 *.tiff
 *.tif
 
+# ZIP FILES
+*.zip
+
 # NUMPY STUFF
 *.npy
 
