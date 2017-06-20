@@ -7,12 +7,12 @@ import skimage.io
 import sys
 
 data_dir_x = "/home/jr0th/github/segmentation/data/BBBC022/test/x/"
-data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022/test/y_boundary_4/"
+data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022/test/y_boundary_2/"
 
 hard = True
 rescale_labels = False
 
-tag = 'DL_on_Hand_boundary_4'
+tag = 'DL_on_Hand_boundary_2'
 
 out_label = 'pred_generator'
 

@@ -7,7 +7,7 @@ import sklearn.metrics
 
 import numpy as np
 
-out_format = 'svg'
+out_format = 'eps'
 
 def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
 
@@ -118,7 +118,7 @@ def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
         cmat = sklearn.metrics.confusion_matrix(y_true = true.flatten(), y_pred = pred.flatten()) #, labels=[0,1])
 
         mappable = origFig.imshow(true_x[sampleIndex,:,:,0])
-        figure.colorbar(mappable, ax=origFig)
+        # figure.colorbar(mappable, ax=origFig)
         
         trueFig.imshow(skimage.color.label2rgb(true, image=true_x[sampleIndex,:,:,0]))
 
@@ -130,19 +130,21 @@ def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
         compFig.imshow(skimage.color.label2rgb(comp, image=true_x[sampleIndex,:,:,0]))
         cmatFig.matshow(cmat, cmap = "cool")
 
-        predProbMapFig.set_title('Prediction (not thresholded)')
-        origFig.set_title('Image')
-        predFig.set_title('Prediction (thresholded)')
-        trueFig.set_title('Truth')
-        compFig.set_title('Errors')
-        cmatFig.set_title('Confusion Matrix')
+        predProbMapFig.set_title('Prediction (not thresholded)', size=13)
+        origFig.set_title('Image', size=13)
+        predFig.set_title('Prediction (thresholded)', size=13)
+        trueFig.set_title('Ground Truth', size=13)
+        compFig.set_title('Pixelwise Errors', size=13)
+        cmatFig.set_title('Confusion Matrix', size=13)
 
+        predProbMapFig.axis('off')
+        origFig.axis('off')
         predFig.axis('off')
         trueFig.axis('off')
         compFig.axis('off')
         
-        cmatFig.set_ylabel('truth')
-        cmatFig.set_xlabel('prediction')
+        cmatFig.set_ylabel('truth', size=13)
+        cmatFig.set_xlabel('prediction', size=13)
         
         # annotate share of pred
         for x in range(2):
