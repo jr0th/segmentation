@@ -28,6 +28,7 @@ __pycache__/
 *.png
 *.tiff
 *.tif
+*.eps
 
 # ZIP FILES
 *.zip
