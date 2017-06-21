@@ -22,13 +22,13 @@ def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
     nSamples = pred_y.shape[0]
 
     for sampleIndex in range(nSamples):
-        nCols = 4
-        figure, axes = plt.subplots(ncols=nCols, nrows=1, figsize=(nCols*5, 5))
+        nCols = 2
+        figure, axes = plt.subplots(ncols=nCols, nrows=2, figsize=(nCols*5, nCols*5))
 
-        predFig = axes[0]
-        trueFig = axes[1]
-        compFig = axes[2]
-        cmatFig = axes[3]
+        predFig = axes[0,0]
+        trueFig = axes[0,1]
+        compFig = axes[1,0]
+        cmatFig = axes[1,1]
         
         pred_prob_map = pred_y[sampleIndex,:,:,:]
         pred_prob_map_vec = pred_prob_map.reshape((-1, 3))
@@ -47,16 +47,20 @@ def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
         compFig.imshow(skimage.color.label2rgb(comp, image=true_x[sampleIndex,:,:,0]))
         cmatFig.matshow(cmat, cmap = "cool")
         
-        predFig.set_title('Prediction')
-        trueFig.set_title('Truth')
-        compFig.set_title('Errors')
+        predFig.set_title('Prediction', fontsize=16)
+        trueFig.set_title('Truth', fontsize=16)
+        compFig.set_title('Errors', fontsize=16)
+
 
         predFig.axis('off')
         trueFig.axis('off')
         compFig.axis('off')
         
-        cmatFig.set_ylabel('truth')
-        cmatFig.set_xlabel('prediction')
+        cmatFig.set_ylabel('truth', fontsize=16)
+        cmatFig.set_xlabel('prediction', fontsize=16)
+        
+        cmatFig.tick_params(axis='both', which='major', labelsize=12)
+        cmatFig.set_title('Confusion Matrix', fontsize=16, y=1.08)
         
         # annotate share of pred
         for x in range(3):
@@ -64,7 +68,7 @@ def visualize(pred_y, true_x, true_y, out_dir='./', label=''):
                 cmatFig.annotate(str(np.round(cmat[x,y],2)), xy=(y, x), 
                         horizontalalignment='center',
                         verticalalignment='center', fontsize = 15)
-        
+        plt.tight_layout(pad = 1)
         plt.savefig(out_dir + label + '_' + str(sampleIndex) + '_vis' + '.' + out_format, format=out_format)
         classNames = ['background', 'interior', 'boundary']
         f = open(out_dir + '/' + label + '_' + str(sampleIndex) + '.txt', 'w')
@@ -92,7 +96,6 @@ def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
         nCols = 3
         nRows = 2
         figure, axes = plt.subplots(ncols=nCols, nrows=2, figsize=(nCols*5+2, nRows*5+2))
-        figure.tight_layout(pad = 1)
 
         origFig = axes[0,0]
         trueFig = axes[0,1]
@@ -123,19 +126,20 @@ def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
         trueFig.imshow(skimage.color.label2rgb(true, image=true_x[sampleIndex,:,:,0]))
 
         mappable = predProbMapFig.imshow(pred_prob_map)
-        figure.colorbar(mappable, ax=predProbMapFig)
+        cbar = figure.colorbar(mappable, ax=predProbMapFig)
+        cbar.ax.tick_params(labelsize=18) 
         
         predFig.imshow(skimage.color.label2rgb(pred, image=true_x[sampleIndex,:,:,0]))
 
         compFig.imshow(skimage.color.label2rgb(comp, image=true_x[sampleIndex,:,:,0]))
         cmatFig.matshow(cmat, cmap = "cool")
 
-        predProbMapFig.set_title('Prediction (not thresholded)', size=13)
-        origFig.set_title('Image', size=13)
-        predFig.set_title('Prediction (thresholded)', size=13)
-        trueFig.set_title('Ground Truth', size=13)
-        compFig.set_title('Pixelwise Errors', size=13)
-        cmatFig.set_title('Confusion Matrix', size=13)
+        predProbMapFig.set_title('Prediction (not thresholded)', fontsize=18)
+        origFig.set_title('Image', fontsize=18)
+        predFig.set_title('Prediction (thresholded)', fontsize=18)
+        trueFig.set_title('Ground Truth', fontsize=18)
+        compFig.set_title('Pixelwise Errors', fontsize=18)
+        cmatFig.set_title('Confusion Matrix', fontsize=18)
 
         predProbMapFig.axis('off')
         origFig.axis('off')
@@ -143,8 +147,10 @@ def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
         trueFig.axis('off')
         compFig.axis('off')
         
-        cmatFig.set_ylabel('truth', size=13)
-        cmatFig.set_xlabel('prediction', size=13)
+        cmatFig.set_ylabel('truth', fontsize=18)
+        cmatFig.set_xlabel('prediction', fontsize=18)
+        
+        cmatFig.tick_params(axis='both', which='major', labelsize=18)
         
         # annotate share of pred
         for x in range(2):
@@ -152,7 +158,7 @@ def visualize_boundary_hard(pred_y, true_x, true_y, out_dir='./', label=''):
                 cmatFig.annotate(str(np.round(cmat[x,y],2)), xy=(y, x), 
                         horizontalalignment='center',
                         verticalalignment='center', fontsize = 15)
-        
+        figure.tight_layout(pad = 1)
         plt.savefig(out_dir + label + '_' + str(sampleIndex) + '_vis' + '.' + out_format, format=out_format)
         classNames = ['background', 'boundary']
         
@@ -193,10 +199,10 @@ def visualize_boundary_soft(pred_y, true_x, true_y, out_dir='./', label=''):
         trueFig.imshow(true_prob_map)
         compFig.imshow(comp)
         
-        origFig.set_title('Image')
-        predFig.set_title('Prediction')
-        trueFig.set_title('Truth')
-        compFig.set_title('Errors (MSE)')
+        origFig.set_title('Image', fontsize=18)
+        predFig.set_title('Prediction', fontsize=18)
+        trueFig.set_title('Truth', fontsize=18)
+        compFig.set_title('Errors (MSE)', fontsize=18)
 
         predFig.axis('off')
         trueFig.axis('off')

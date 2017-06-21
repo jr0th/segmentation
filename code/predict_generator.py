@@ -6,10 +6,23 @@ import skimage.io
 
 import sys
 
-tag = "DL_on_Hand_8"
+import keras
+import tensorflow as tf
+
+# build session running on a specific GPU
+configuration = tf.ConfigProto()
+configuration.gpu_options.allow_growth = True
+configuration.gpu_options.visible_device_list = "1"
+session = tf.Session(config = configuration)
+
+# apply session
+keras.backend.set_session(session)
+
+
+tag = "DL_on_CP"
 
 data_dir_x = "/home/jr0th/github/segmentation/data/BBBC022/test/x/"
-data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022/test/y_label_binary_8/"
+data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022/test/y_label_cp/"
 
 out_dir = '/home/jr0th/github/segmentation/out/' + tag + '/'
 weights_path = '/home/jr0th/github/segmentation/checkpoints/' + tag + '/checkpoint_0199.hdf5'

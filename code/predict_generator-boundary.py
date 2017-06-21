@@ -6,6 +6,18 @@ import skimage.io
 
 import sys
 
+import keras
+import tensorflow as tf
+
+# build session running on a specific GPU
+configuration = tf.ConfigProto()
+configuration.gpu_options.allow_growth = True
+configuration.gpu_options.visible_device_list = "1"
+session = tf.Session(config = configuration)
+
+# apply session
+keras.backend.set_session(session)
+
 data_dir_x = "/home/jr0th/github/segmentation/data/BBBC022/test/x/"
 data_dir_y = "/home/jr0th/github/segmentation/data/BBBC022/test/y_boundary_2/"
 
@@ -18,7 +30,7 @@ out_label = 'pred_generator'
 
 out_dir = '/home/jr0th/github/segmentation/out/' + tag + '/'
 
-weights_path = '/home/jr0th/github/segmentation/checkpoints/' + tag + '/checkpoint_0199.hdf5'
+weights_path = '/home/jr0th/github/segmentation/checkpoints/' + tag + '/checkpoint_0010.hdf5'
 batch_size = 10
 bit_depth = 8
 
